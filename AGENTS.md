@@ -3,6 +3,9 @@
 ## Project Overview
 This platform streamlines academic operations across student services, teaching workflows, class logistics, attendance monitoring, and manual payment processing. The MVP targets cohesive experiences for students, teachers, registrars, and finance staff by unifying data, automating repetitive tasks, and providing actionable insights.
 
+## Use Laravel Way
+When scaffolding new application code, prefer the relevant `php artisan make:*` generators (for example, `php artisan make:model Example -mfs` or `php artisan make:controller Example --resource`) so new classes follow Laravel conventions.
+
 ## Module Map
 - `Students`: Enrollment management, guardianship, academic standing.
 - `Teachers`: Assignment, qualifications, availability, performance feedback.
