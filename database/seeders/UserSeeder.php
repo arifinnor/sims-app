@@ -4,11 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Hash;
-use Laravel\Fortify\Contracts\TwoFactorAuthenticationProvider;
-use Laravel\Fortify\Fortify;
-use Laravel\Fortify\RecoveryCode;
 
 class UserSeeder extends Seeder
 {
@@ -17,26 +12,22 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        $user = User::query()->updateOrCreate([
-            'email' => 'admin@example.com',
-        ], [
+        User::factory()->withoutTwoFactor()->create([
             'name' => 'Administrator',
-            'password' => Hash::make('password'),
+            'email' => 'admin@example.com',
             'email_verified_at' => now(),
         ]);
 
-        $secretLength = (int) config('fortify-options.two-factor-authentication.secret-length', 16);
+        User::factory()->withoutTwoFactor()->create([
+            'name' => 'Teacher',
+            'email' => 'teacher@example.com',
+            'email_verified_at' => now(),
+        ]);
 
-        $provider = app(TwoFactorAuthenticationProvider::class);
-
-        $user->forceFill([
-            'two_factor_secret' => Fortify::currentEncrypter()->encrypt(
-                $provider->generateSecretKey($secretLength)
-            ),
-            'two_factor_recovery_codes' => Fortify::currentEncrypter()->encrypt(
-                json_encode(Collection::times(8, static fn () => RecoveryCode::generate())->all())
-            ),
-            'two_factor_confirmed_at' => now(),
-        ])->save();
+        User::factory()->withoutTwoFactor()->create([
+            'name' => 'Student',
+            'email' => 'student@example.com',
+            'email_verified_at' => now(),
+        ]);
     }
 }
