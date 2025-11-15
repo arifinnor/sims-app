@@ -20,6 +20,7 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'emailVerifiedAt' => $this->email_verified_at?->toIso8601String(),
             'createdAt' => $this->created_at->toIso8601String(),
+            'created_at' => $this->created_at->toIso8601String(), // Required for cursor pagination
             'updatedAt' => $this->updated_at->toIso8601String(),
             'deletedAt' => $this->deleted_at?->toIso8601String(),
         ];

@@ -8,7 +8,7 @@ import { Head, Link } from '@inertiajs/vue3';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
-interface UserDetails {
+interface User {
     id: number;
     name: string;
     email: string;
@@ -18,7 +18,7 @@ interface UserDetails {
 }
 
 interface Props {
-    user: UserDetails;
+    user: User;
 }
 
 const props = defineProps<Props>();

@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Users\UserIndexRequest;
 use App\Http\Requests\Users\UserStoreRequest;
 use App\Http\Requests\Users\UserUpdateRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -16,30 +16,21 @@ class UserController extends Controller
     /**
      * Display a listing of the users.
      */
-    public function index(Request $request): Response
+    public function index(UserIndexRequest $request): Response
     {
-        $perPage = $request->query('per_page', 15);
-        $perPage = in_array((int) $perPage, [15, 50, 100, 200], true) ? (int) $perPage : 15;
+        $validated = $request->validated();
 
-        $withTrashed = $request->query('with_trashed', 'none');
-
-        $query = User::query();
-
-        match ($withTrashed) {
-            'only' => $query->onlyTrashed(),
-            'all' => $query->withTrashed(),
-            default => $query,
-        };
-
-        $users = $query
-            ->when($request->query('search'), function ($query, $search) {
+        $users = User::query()
+            ->when($validated['with_trashed'] === 'only', fn ($query) => $query->onlyTrashed())
+            ->when($validated['with_trashed'] === 'all', fn ($query) => $query->withTrashed())
+            ->when($validated['search'], function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%")
                         ->orWhere('email', 'like', "%{$search}%");
                 });
             })
             ->latest()
-            ->cursorPaginate($perPage)
+            ->cursorPaginate($validated['per_page'])
             ->withQueryString()
             ->through(fn (User $user) => UserResource::make($user)->resolve());
 
