@@ -3,6 +3,13 @@ import { computed, ref, watch } from 'vue';
 import { Link, router } from '@inertiajs/vue3';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 
 interface Props {
     nextCursor: string | null;
@@ -20,16 +27,21 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const perPageOptions = [15, 50, 100, 200];
-const selectedPerPage = ref(props.perPage);
+const selectedPerPage = ref(String(props.perPage));
+const isUpdatingFromProps = ref(false);
 
 watch(() => props.perPage, (newValue) => {
-    selectedPerPage.value = newValue;
+    isUpdatingFromProps.value = true;
+    selectedPerPage.value = String(newValue);
+    isUpdatingFromProps.value = false;
 });
 
-const updatePerPage = (value: string) => {
-    selectedPerPage.value = Number(value);
+watch(selectedPerPage, (newValue) => {
+    if (isUpdatingFromProps.value) {
+        return;
+    }
     const url = new URL(props.path, window.location.origin);
-    url.searchParams.set('per_page', value);
+    url.searchParams.set('per_page', newValue);
     url.searchParams.delete('cursor');
 
     const currentSearch = new URLSearchParams(window.location.search).get('search');
@@ -43,7 +55,7 @@ const updatePerPage = (value: string) => {
         preserveScroll: false,
         replace: true,
     });
-};
+});
 
 const getNextUrl = (): string | null => {
     if (!props.nextCursor) {
@@ -100,21 +112,21 @@ const prevUrl = computed(() => getPrevUrl());
             <Label for="per-page" class="text-sm text-muted-foreground whitespace-nowrap">
                 Per page:
             </Label>
-            <select
-                id="per-page"
-                :value="selectedPerPage"
-                @change="updatePerPage(($event.target as HTMLSelectElement).value)"
-                class="h-9 w-20 rounded-md border border-input bg-background px-3 py-1 text-sm text-foreground shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 dark:bg-input/30 dark:border-input dark:text-foreground hover:bg-accent/50 dark:hover:bg-input/50 cursor-pointer"
-            >
-                <option
-                    v-for="option in perPageOptions"
-                    :key="option"
-                    :value="option"
-                    class="bg-background text-foreground dark:bg-input dark:text-foreground"
-                >
-                    {{ option }}
-                </option>
-            </select>
+            <Select v-model="selectedPerPage">
+                <SelectTrigger id="per-page" class="w-20">
+                    <SelectValue />
+                </SelectTrigger>
+                <SelectContent class="min-w-[80px]">
+                    <SelectItem
+                        v-for="option in perPageOptions"
+                        :key="option"
+                        :value="String(option)"
+                        class="whitespace-nowrap"
+                    >
+                        {{ option }}
+                    </SelectItem>
+                </SelectContent>
+            </Select>
         </div>
         <div class="flex items-center gap-4">
             <span class="text-sm text-muted-foreground">
