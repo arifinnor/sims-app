@@ -3,7 +3,7 @@ import UserController from '@/actions/App/Http/Controllers/UserController';
 import Heading from '@/components/Heading.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -15,34 +15,60 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { ref, watch, computed } from 'vue';
+import { Input } from '@/components/ui/input';
+import { ref, watch, computed, onMounted } from 'vue';
+import { useDebounceFn } from '@vueuse/core';
 import DataTable from './DataTable.vue';
 import DataTablePagination from './DataTablePagination.vue';
 import { createColumns, type User } from './columns';
 
-interface PaginationLink {
-    url: string | null;
-    label: string;
-    active: boolean;
-}
-
-interface Paginated<T> {
+interface CursorPaginated<T> {
     data: T[];
-    links: PaginationLink[];
-    current_page: number;
-    from: number | null;
-    last_page: number;
+    next_cursor: string | null;
+    prev_cursor: string | null;
     path: string;
     per_page: number;
-    to: number | null;
-    total: number;
+    next_page_url: string | null;
+    prev_page_url: string | null;
 }
 
 interface Props {
-    users: Paginated<User>;
+    users: CursorPaginated<User>;
 }
 
 const props = defineProps<Props>();
+
+const searchQuery = ref<string>('');
+const isInitialMount = ref(true);
+
+const performSearch = useDebounceFn(() => {
+    const url = new URL(UserController.index().url, window.location.origin);
+    if (searchQuery.value) {
+        url.searchParams.set('search', searchQuery.value);
+    } else {
+        url.searchParams.delete('search');
+    }
+    url.searchParams.delete('cursor');
+
+    router.visit(url.pathname + url.search, {
+        only: ['users'],
+        preserveState: true,
+        preserveScroll: true,
+        replace: true,
+    });
+}, 300);
+
+watch(searchQuery, () => {
+    if (!isInitialMount.value) {
+        performSearch();
+    }
+});
+
+onMounted(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    searchQuery.value = urlParams.get('search') || '';
+    isInitialMount.value = false;
+});
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -113,16 +139,26 @@ const columns = computed(() => createColumns(openDeleteDialog));
                     </Button>
                 </CardHeader>
                 <CardContent class="space-y-6">
+                    <div class="w-full max-w-sm">
+                        <Input
+                            v-model="searchQuery"
+                            type="search"
+                            placeholder="Search by name or email..."
+                            class="w-full"
+                        />
+                    </div>
+
                     <DataTable
                         :data="props.users.data"
                         :columns="columns"
                     />
 
                     <DataTablePagination
-                        :links="props.users.links"
-                        :from="props.users.from"
-                        :to="props.users.to"
-                        :total="props.users.total"
+                        :next-cursor="props.users.next_cursor"
+                        :prev-cursor="props.users.prev_cursor"
+                        :path="props.users.path"
+                        :per-page="props.users.per_page"
+                        :data-count="props.users.data.length"
                     />
             </CardContent>
         </Card>

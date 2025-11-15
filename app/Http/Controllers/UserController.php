@@ -16,18 +16,39 @@ class UserController extends Controller
      */
     public function index(): Response
     {
+        $perPage = request('per_page', 15);
+        $allowedPerPage = [15, 50, 100, 200];
+        $perPage = in_array((int) $perPage, $allowedPerPage, true) ? (int) $perPage : 15;
+
         $users = User::query()
+            ->when(request('search'), function ($query) {
+                $search = request('search');
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            })
             ->latest()
-            ->paginate(10)
-            ->withQueryString()
-            ->through(fn (User $user) => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'emailVerifiedAt' => $user->email_verified_at,
-                'createdAt' => $user->created_at,
-                'updatedAt' => $user->updated_at,
-            ]);
+            ->cursorPaginate($perPage);
+
+        $users->setPath(request()->url());
+
+        if (request()->has('search')) {
+            $users->appends(['search' => request('search')]);
+        }
+
+        if (request()->has('per_page')) {
+            $users->appends(['per_page' => $perPage]);
+        }
+
+        $users = $users->through(fn (User $user) => [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'emailVerifiedAt' => $user->email_verified_at,
+            'createdAt' => $user->created_at,
+            'updatedAt' => $user->updated_at,
+        ]);
 
         return Inertia::render('Users/Index', [
             'users' => $users,
