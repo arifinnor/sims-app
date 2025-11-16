@@ -29,7 +29,7 @@ class UserController extends Controller
                         ->orWhere('email', 'like', "%{$search}%");
                 });
             })
-            ->latest()
+            ->latest('id')
             ->cursorPaginate($validated['per_page'])
             ->withQueryString()
             ->through(fn (User $user) => UserResource::make($user)->resolve());

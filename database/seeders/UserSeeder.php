@@ -18,24 +18,6 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
 
-        User::factory()->withoutTwoFactor()->create([
-            'name' => 'Teacher',
-            'email' => 'teacher@example.com',
-            'email_verified_at' => now(),
-        ]);
-
-        User::factory()->withoutTwoFactor()->create([
-            'name' => 'Student',
-            'email' => 'student@example.com',
-            'email_verified_at' => now(),
-        ]);
-
-        foreach (range(1, 20) as $count) {
-            User::factory()->withoutTwoFactor()->create([
-                'name' => "user{$count}",
-                'email' => "user{$count}@example.com",
-                'email_verified_at' => now(),
-            ]);
-        }
+        User::factory()->withoutTwoFactor()->count(20)->create();
     }
 }
