@@ -1,24 +1,24 @@
 <script setup lang="ts">
 import { Link, Form, router } from '@inertiajs/vue3';
 import { Button } from '@/components/ui/button';
-import TeacherController from '@/actions/App/Http/Controllers/TeacherController';
-import type { Teacher } from './columns';
+import GuardianController from '@/actions/App/Http/Controllers/GuardianController';
+import type { Guardian } from './columns';
 import { computed } from 'vue';
 
 interface Props {
-    teacher: Teacher;
+    guardian: Guardian;
     onDeleteClick: (
-        teacher: Teacher,
+        guardian: Guardian,
         submit: () => void,
         processing: () => boolean,
     ) => void;
     onRestoreClick?: (
-        teacher: Teacher,
+        guardian: Guardian,
         submit: () => void,
         processing: () => boolean,
     ) => void;
     onForceDeleteClick?: (
-        teacher: Teacher,
+        guardian: Guardian,
         submit: () => void,
         processing: () => boolean,
     ) => void;
@@ -26,22 +26,22 @@ interface Props {
 
 const props = defineProps<Props>();
 
-const isDeleted = computed(() => !!props.teacher.deletedAt);
+const isDeleted = computed(() => !!props.guardian.deletedAt);
 
 const handleRestore = () => {
-    router.post(`/teachers/${props.teacher.id}/restore`, {}, {
+    router.post(`/guardians/${props.guardian.id}/restore`, {}, {
         preserveScroll: true,
         onSuccess: () => {
-            router.reload({ only: ['teachers'] });
+            router.reload({ only: ['guardians'] });
         },
     });
 };
 
 const handleForceDelete = () => {
-    router.delete(`/teachers/${props.teacher.id}/force-delete`, {
+    router.delete(`/guardians/${props.guardian.id}/force-delete`, {
         preserveScroll: true,
         onSuccess: () => {
-            router.reload({ only: ['teachers'] });
+            router.reload({ only: ['guardians'] });
         },
     });
 };
@@ -51,12 +51,12 @@ const handleForceDelete = () => {
     <div class="flex items-center justify-end gap-2">
         <template v-if="!isDeleted">
             <Button as-child size="sm" variant="secondary">
-                <Link :href="TeacherController.edit.url(teacher.id)">
+                <Link :href="GuardianController.edit.url(guardian.id)">
                     Edit
                 </Link>
             </Button>
             <Form
-                :action="TeacherController.destroy.url(teacher.id)"
+                :action="GuardianController.destroy.url(guardian.id)"
                 method="delete"
                 class="inline-flex"
                 v-slot="{ processing, submit }"
@@ -66,7 +66,7 @@ const handleForceDelete = () => {
                     variant="destructive"
                     size="sm"
                     :disabled="processing"
-                    @click="onDeleteClick(teacher, () => submit(), () => processing)"
+                    @click="onDeleteClick(guardian, () => submit(), () => processing)"
                 >
                     Delete
                 </Button>
@@ -78,7 +78,7 @@ const handleForceDelete = () => {
                 size="sm"
                 variant="secondary"
                 :disabled="false"
-                @click="onRestoreClick ? onRestoreClick(teacher, handleRestore, () => false) : handleRestore()"
+                @click="onRestoreClick ? onRestoreClick(guardian, handleRestore, () => false) : handleRestore()"
             >
                 Restore
             </Button>
@@ -87,7 +87,7 @@ const handleForceDelete = () => {
                 variant="destructive"
                 size="sm"
                 :disabled="false"
-                @click="onForceDeleteClick ? onForceDeleteClick(teacher, handleForceDelete, () => false) : handleForceDelete()"
+                @click="onForceDeleteClick ? onForceDeleteClick(guardian, handleForceDelete, () => false) : handleForceDelete()"
             >
                 Force Delete
             </Button>

@@ -56,7 +56,8 @@ const handleForceDelete = () => {
                 </Link>
             </Button>
             <Form
-                v-bind="UserController.destroy.form(user.id)"
+                :action="UserController.destroy.url(user.id)"
+                method="delete"
                 class="inline-flex"
                 v-slot="{ processing, submit }"
             >

@@ -32,6 +32,7 @@ import UserMenuContent from '@/components/UserMenuContent.vue';
 import { getInitials } from '@/composables/useInitials';
 import { toUrl, urlIsActive } from '@/lib/utils';
 import { dashboard } from '@/routes';
+import StudentController from '@/actions/App/Http/Controllers/StudentController';
 import TeacherController from '@/actions/App/Http/Controllers/TeacherController';
 import UserController from '@/actions/App/Http/Controllers/UserController';
 import type { BreadcrumbItem, NavItem } from '@/types';
@@ -42,6 +43,7 @@ import {
     GraduationCap,
     LayoutGrid,
     Menu,
+    School,
     Search,
     User,
 } from 'lucide-vue-next';
@@ -85,6 +87,11 @@ const mainNavItems: NavItem[] = [
         title: 'Teachers',
         href: TeacherController.index().url,
         icon: GraduationCap,
+    },
+    {
+        title: 'Students',
+        href: StudentController.index().url,
+        icon: School,
     },
 ];
 
