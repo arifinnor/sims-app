@@ -43,28 +43,10 @@ const breadcrumbs: BreadcrumbItem[] = [
             <Form
                 v-bind="TeacherController.store.form()"
                 class="contents"
-                :reset-on-success="[
-                    'teacher_number',
-                    'name',
-                    'email',
-                    'phone',
-                ]"
+                :reset-on-success="['name', 'email', 'phone']"
                 v-slot="{ errors, processing }"
             >
                 <CardContent class="grid gap-6">
-                    <div class="grid gap-2">
-                        <Label for="teacher_number">Teacher Number</Label>
-                        <Input
-                            id="teacher_number"
-                            type="text"
-                            name="teacher_number"
-                            required
-                            placeholder="TCH-00001"
-                            autofocus
-                        />
-                        <InputError :message="errors.teacher_number" />
-                    </div>
-
                     <div class="grid gap-2">
                         <Label for="name">Name</Label>
                         <Input
@@ -74,6 +56,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                             autocomplete="name"
                             required
                             placeholder="Full name"
+                            autofocus
                         />
                         <InputError :message="errors.name" />
                     </div>

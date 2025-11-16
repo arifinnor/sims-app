@@ -13,7 +13,8 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { LayoutGrid, User } from 'lucide-vue-next';
+import { GraduationCap, LayoutGrid, User } from 'lucide-vue-next';
+import TeacherController from '@/actions/App/Http/Controllers/TeacherController';
 import UserController from '@/actions/App/Http/Controllers/UserController';
 import AppLogo from './AppLogo.vue';
 
@@ -27,6 +28,11 @@ const mainNavItems: NavItem[] = [
         title: 'Users',
         href: UserController.index().url,
         icon: User,
+    },
+    {
+        title: 'Teachers',
+        href: TeacherController.index().url,
+        icon: GraduationCap,
     },
 ];
 

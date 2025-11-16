@@ -27,7 +27,6 @@ test('teacher can be created', function () {
         ->actingAs($actingUser)
         ->from(route('teachers.create'))
         ->post(route('teachers.store'), [
-            'teacher_number' => 'TCH-00001',
             'name' => 'Jane Doe',
             'email' => 'jane@example.com',
             'phone' => '+1234567890',
@@ -39,8 +38,13 @@ test('teacher can be created', function () {
 
     $this->assertDatabaseHas('teachers', [
         'email' => 'jane@example.com',
-        'teacher_number' => 'TCH-00001',
     ]);
+
+    $teacher = Teacher::where('email', 'jane@example.com')->first();
+    expect($teacher->teacher_number)
+        ->toStartWith('TCH-')
+        ->toHaveLength(9)
+        ->toMatch('/^TCH-[A-Z0-9]{5}$/');
 });
 
 test('teacher creation validates unique email', function () {
@@ -51,7 +55,6 @@ test('teacher creation validates unique email', function () {
         ->actingAs($actingUser)
         ->from(route('teachers.create'))
         ->post(route('teachers.store'), [
-            'teacher_number' => 'TCH-00002',
             'name' => 'Jane Duplicate',
             'email' => $existingTeacher->email,
             'phone' => '+1234567890',
@@ -64,25 +67,21 @@ test('teacher creation validates unique email', function () {
     $this->assertDatabaseCount('teachers', 1);
 });
 
-test('teacher creation validates unique teacher number', function () {
+test('teacher number is auto-generated and unique', function () {
     $actingUser = User::factory()->create();
-    $existingTeacher = Teacher::factory()->create(['teacher_number' => 'TCH-00001']);
 
-    $response = $this
-        ->actingAs($actingUser)
-        ->from(route('teachers.create'))
-        ->post(route('teachers.store'), [
-            'teacher_number' => $existingTeacher->teacher_number,
-            'name' => 'Jane Doe',
-            'email' => 'jane@example.com',
-            'phone' => '+1234567890',
-        ]);
+    $teacher1 = Teacher::factory()->create();
+    $teacher2 = Teacher::factory()->create();
+    $teacher3 = Teacher::factory()->create();
 
-    $response
-        ->assertSessionHasErrors('teacher_number')
-        ->assertRedirect(route('teachers.create'));
+    expect($teacher1->teacher_number)
+        ->not->toBe($teacher2->teacher_number)
+        ->not->toBe($teacher3->teacher_number);
 
-    $this->assertDatabaseCount('teachers', 1);
+    expect($teacher1->teacher_number)
+        ->toStartWith('TCH-')
+        ->toHaveLength(9)
+        ->toMatch('/^TCH-[A-Z0-9]{5}$/');
 });
 
 test('teacher can be updated', function () {
@@ -93,7 +92,7 @@ test('teacher can be updated', function () {
         ->actingAs($actingUser)
         ->from(route('teachers.edit', $teacher))
         ->put(route('teachers.update', $teacher), [
-            'teacher_number' => 'TCH-00099',
+            'teacher_number' => 'TCH-A1B2C',
             'name' => 'Updated Name',
             'email' => 'updated@example.com',
             'phone' => '+9876543210',
@@ -107,7 +106,7 @@ test('teacher can be updated', function () {
 
     expect($teacher->name)->toBe('Updated Name')
         ->and($teacher->email)->toBe('updated@example.com')
-        ->and($teacher->teacher_number)->toBe('TCH-00099')
+        ->and($teacher->teacher_number)->toBe('TCH-A1B2C')
         ->and($teacher->phone)->toBe('+9876543210');
 });
 

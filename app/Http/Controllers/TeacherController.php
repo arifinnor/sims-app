@@ -8,7 +8,6 @@ use App\Http\Requests\Teachers\TeacherUpdateRequest;
 use App\Http\Resources\TeacherResource;
 use App\Models\Teacher;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -27,11 +26,10 @@ class TeacherController extends Controller
             ->when($validated['search'], function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%")
                         ->orWhere('teacher_number', 'like', "%{$search}%");
                 });
             })
-            ->latest()
+            ->latest('id')
             ->cursorPaginate($validated['per_page'])
             ->withQueryString()
             ->through(fn (Teacher $teacher) => TeacherResource::make($teacher)->resolve());
@@ -55,9 +53,7 @@ class TeacherController extends Controller
      */
     public function store(TeacherStoreRequest $request): RedirectResponse
     {
-        $teacher = new Teacher($request->validated());
-        $teacher->id = (string) Str::orderedUuid();
-        $teacher->save();
+        Teacher::create($request->validated());
 
         return to_route('teachers.index')->with('success', 'Teacher created.');
     }

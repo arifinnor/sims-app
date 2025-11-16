@@ -32,12 +32,14 @@ import UserMenuContent from '@/components/UserMenuContent.vue';
 import { getInitials } from '@/composables/useInitials';
 import { toUrl, urlIsActive } from '@/lib/utils';
 import { dashboard } from '@/routes';
+import TeacherController from '@/actions/App/Http/Controllers/TeacherController';
 import UserController from '@/actions/App/Http/Controllers/UserController';
 import type { BreadcrumbItem, NavItem } from '@/types';
 import { InertiaLinkProps, Link, usePage } from '@inertiajs/vue3';
 import {
     BookOpen,
     Folder,
+    GraduationCap,
     LayoutGrid,
     Menu,
     Search,
@@ -78,6 +80,11 @@ const mainNavItems: NavItem[] = [
         title: 'Users',
         href: UserController.index().url,
         icon: User,
+    },
+    {
+        title: 'Teachers',
+        href: TeacherController.index().url,
+        icon: GraduationCap,
     },
 ];
 

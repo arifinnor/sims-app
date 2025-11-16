@@ -20,9 +20,9 @@ class TeacherResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'phone' => $this->phone,
-            'createdAt' => $this->created_at->toIso8601String(),
-            'created_at' => $this->created_at->toIso8601String(), // Required for cursor pagination
-            'updatedAt' => $this->updated_at->toIso8601String(),
+            'createdAt' => $this->created_at?->toIso8601String(),
+            'created_at' => $this->created_at?->toIso8601String(),
+            'updatedAt' => $this->updated_at?->toIso8601String(),
             'deletedAt' => $this->deleted_at?->toIso8601String(),
         ];
     }
