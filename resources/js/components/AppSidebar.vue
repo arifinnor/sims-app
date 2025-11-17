@@ -13,10 +13,9 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { GraduationCap, LayoutGrid, School, User, Users } from 'lucide-vue-next';
+import { GraduationCap, LayoutGrid, User, Users } from 'lucide-vue-next';
 import StudentController from '@/actions/App/Http/Controllers/StudentController';
 import TeacherController from '@/actions/App/Http/Controllers/TeacherController';
-import GuardianController from '@/actions/App/Http/Controllers/GuardianController';
 import UserController from '@/actions/App/Http/Controllers/UserController';
 import AppLogo from './AppLogo.vue';
 
@@ -39,11 +38,6 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Students',
         href: StudentController.index().url,
-        icon: School,
-    },
-    {
-        title: 'Guardians',
-        href: GuardianController.index().url,
         icon: Users,
     },
 ];

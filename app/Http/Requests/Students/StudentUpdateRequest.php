@@ -27,12 +27,7 @@ class StudentUpdateRequest extends FormRequest
         $student = $this->route('student');
 
         return [
-            'student_number' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('students', 'student_number')->ignore($student),
-            ],
+            'student_number' => ['prohibited'],
             'name' => ['required', 'string', 'max:255'],
             'email' => [
                 'nullable',

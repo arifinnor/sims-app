@@ -32,15 +32,15 @@ test('student can be created', function () {
             'phone' => '+1234567890',
         ]);
 
-    $response
-        ->assertSessionHasNoErrors()
-        ->assertRedirect(route('students.index'));
+    $response->assertSessionHasNoErrors();
+
+    $student = Student::where('email', 'jane@example.com')->firstOrFail();
+
+    $response->assertRedirect(route('students.edit', $student));
 
     $this->assertDatabaseHas('students', [
         'email' => 'jane@example.com',
     ]);
-
-    $student = Student::where('email', 'jane@example.com')->first();
     expect($student->student_number)
         ->toStartWith('STU-')
         ->toHaveLength(9)
@@ -59,9 +59,11 @@ test('student can be created without email', function () {
             'phone' => null,
         ]);
 
-    $response
-        ->assertSessionHasNoErrors()
-        ->assertRedirect(route('students.index'));
+    $response->assertSessionHasNoErrors();
+
+    $student = Student::where('name', 'John Doe')->firstOrFail();
+
+    $response->assertRedirect(route('students.edit', $student));
 
     $this->assertDatabaseHas('students', [
         'name' => 'John Doe',
@@ -109,12 +111,12 @@ test('student number is auto-generated and unique', function () {
 test('student can be updated', function () {
     $actingUser = User::factory()->create();
     $student = Student::factory()->create();
+    $originalNumber = $student->student_number;
 
     $response = $this
         ->actingAs($actingUser)
         ->from(route('students.edit', $student))
         ->put(route('students.update', $student), [
-            'student_number' => 'STU-A1B2C',
             'name' => 'Updated Name',
             'email' => 'updated@example.com',
             'phone' => '+9876543210',
@@ -128,8 +130,32 @@ test('student can be updated', function () {
 
     expect($student->name)->toBe('Updated Name')
         ->and($student->email)->toBe('updated@example.com')
-        ->and($student->student_number)->toBe('STU-A1B2C')
+        ->and($student->student_number)->toBe($originalNumber)
         ->and($student->phone)->toBe('+9876543210');
+});
+
+test('student number cannot be manually updated', function () {
+    $actingUser = User::factory()->create();
+    $student = Student::factory()->create();
+    $originalNumber = $student->student_number;
+
+    $response = $this
+        ->actingAs($actingUser)
+        ->from(route('students.edit', $student))
+        ->put(route('students.update', $student), [
+            'student_number' => 'STU-ABCDE',
+            'name' => $student->name,
+            'email' => $student->email,
+            'phone' => $student->phone,
+        ]);
+
+    $response
+        ->assertSessionHasErrors('student_number')
+        ->assertRedirect(route('students.edit', $student));
+
+    $student->refresh();
+
+    expect($student->student_number)->toBe($originalNumber);
 });
 
 test('student can be updated to remove email', function () {
@@ -140,7 +166,6 @@ test('student can be updated to remove email', function () {
         ->actingAs($actingUser)
         ->from(route('students.edit', $student))
         ->put(route('students.update', $student), [
-            'student_number' => $student->student_number,
             'name' => $student->name,
             'email' => null,
             'phone' => $student->phone,
