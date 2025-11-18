@@ -37,6 +37,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('guardians', \App\Http\Controllers\GuardianController::class);
     Route::post('guardians/{guardian}/restore', [\App\Http\Controllers\GuardianController::class, 'restore'])->name('guardians.restore');
     Route::delete('guardians/{guardian}/force-delete', [\App\Http\Controllers\GuardianController::class, 'forceDelete'])->name('guardians.force-delete');
+
+    Route::prefix('finance')->name('finance.')->group(function () {
+        Route::resource('accounts', \App\Http\Controllers\Finance\AccountController::class);
+        Route::post('accounts/{account}/restore', [\App\Http\Controllers\Finance\AccountController::class, 'restore'])->name('accounts.restore');
+        Route::delete('accounts/{account}/force-delete', [\App\Http\Controllers\Finance\AccountController::class, 'forceDelete'])->name('accounts.force-delete');
+    });
 });
 
 require __DIR__.'/settings.php';
