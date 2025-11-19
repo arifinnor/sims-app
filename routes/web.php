@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Finance\ChartOfAccountController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -39,9 +40,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('guardians/{guardian}/force-delete', [\App\Http\Controllers\GuardianController::class, 'forceDelete'])->name('guardians.force-delete');
 
     Route::prefix('finance')->name('finance.')->group(function () {
-        Route::resource('accounts', \App\Http\Controllers\Finance\AccountController::class);
-        Route::post('accounts/{account}/restore', [\App\Http\Controllers\Finance\AccountController::class, 'restore'])->name('accounts.restore');
-        Route::delete('accounts/{account}/force-delete', [\App\Http\Controllers\Finance\AccountController::class, 'forceDelete'])->name('accounts.force-delete');
+        Route::resource('chart-of-accounts', ChartOfAccountController::class);
+        Route::post('chart-of-accounts/{chart_of_account}/restore', [ChartOfAccountController::class, 'restore'])->name('chart-of-accounts.restore');
+        Route::delete('chart-of-accounts/{chart_of_account}/force-delete', [ChartOfAccountController::class, 'forceDelete'])->name('chart-of-accounts.force-delete');
     });
 });
 

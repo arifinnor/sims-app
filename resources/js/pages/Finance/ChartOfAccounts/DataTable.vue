@@ -12,11 +12,11 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import type { Account } from './columns';
+import type { ChartOfAccount } from './columns';
 
 interface Props {
-    data: Account[];
-    columns: ColumnDef<Account>[];
+    data: ChartOfAccount[];
+    columns: ColumnDef<ChartOfAccount>[];
 }
 
 const props = defineProps<Props>();

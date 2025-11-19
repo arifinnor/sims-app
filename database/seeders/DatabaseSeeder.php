@@ -2,7 +2,8 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Database\Seeders\Finance\AccountCategorySeeder;
+use Database\Seeders\Finance\ChartOfAccountSeeder;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -15,6 +16,7 @@ class DatabaseSeeder extends Seeder
         $this->call(UserSeeder::class);
         $this->call(TeacherSeeder::class);
         $this->call(StudentSeeder::class);
-        $this->call(AccountSeeder::class);
+        $this->call(AccountCategorySeeder::class);
+        $this->call(ChartOfAccountSeeder::class);
     }
 }

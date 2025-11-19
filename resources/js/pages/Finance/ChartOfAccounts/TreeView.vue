@@ -1,96 +1,29 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
-import AccountController from '@/actions/App/Http/Controllers/Finance/AccountController';
-import TreeNode from './TreeNode.vue';
-import type { Account } from './columns';
+import { ref } from 'vue';
+import { Link } from '@inertiajs/vue3';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import ChartOfAccountController from '@/actions/App/Http/Controllers/Finance/ChartOfAccountController';
+import { ChevronRight, ChevronDown, Folder, FileText } from 'lucide-vue-next';
+import type { ChartOfAccount } from './columns';
 
-interface TreeNodeData extends Account {
-    children?: TreeNodeData[];
-    depth?: number;
+interface TreeNode extends ChartOfAccount {
+    children?: TreeNode[];
+    has_children?: boolean;
 }
 
 interface Props {
-    accounts: Account[];
-    onDeleteClick: (
-        account: Account,
-        submit: () => void,
-        processing: () => boolean,
-    ) => void;
-    onRestoreClick?: (
-        account: Account,
-        submit: () => void,
-        processing: () => boolean,
-    ) => void;
-    onForceDeleteClick?: (
-        account: Account,
-        submit: () => void,
-        processing: () => boolean,
-    ) => void;
+    nodes: TreeNode[];
+    level?: number;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+    level: 0,
+});
 
 const expandedNodes = ref<Set<string>>(new Set());
 
-const buildTree = (accounts: Account[]): TreeNodeData[] => {
-    const accountMap = new Map<string, TreeNodeData>();
-    const rootNodes: TreeNodeData[] = [];
-
-    // First pass: create all nodes
-    accounts.forEach((account) => {
-        accountMap.set(account.id, {
-            ...account,
-            children: [],
-            depth: 0,
-        });
-    });
-
-    // Second pass: build tree structure
-    accounts.forEach((account) => {
-        const node = accountMap.get(account.id)!;
-        const parentId = account.parentAccountId;
-
-        if (parentId && accountMap.has(parentId)) {
-            const parent = accountMap.get(parentId)!;
-            if (!parent.children) {
-                parent.children = [];
-            }
-            parent.children.push(node);
-            node.depth = (parent.depth || 0) + 1;
-            // Expand all parent nodes by default
-            expandedNodes.value.add(parentId);
-        } else {
-            rootNodes.push(node);
-        }
-    });
-
-    // Sort children by account number
-    const sortChildren = (nodes: TreeNodeData[]): void => {
-        nodes.sort((a, b) => {
-            if (a.accountNumber < b.accountNumber) {
-                return -1;
-            }
-            if (a.accountNumber > b.accountNumber) {
-                return 1;
-            }
-            return 0;
-        });
-        nodes.forEach((node) => {
-            if (node.children && node.children.length > 0) {
-                sortChildren(node.children);
-            }
-        });
-    };
-
-    sortChildren(rootNodes);
-
-    return rootNodes;
-};
-
-const treeNodes = computed(() => buildTree(props.accounts));
-
-const toggleNode = (nodeId: string): void => {
+const toggleNode = (nodeId: string) => {
     if (expandedNodes.value.has(nodeId)) {
         expandedNodes.value.delete(nodeId);
     } else {
@@ -101,35 +34,101 @@ const toggleNode = (nodeId: string): void => {
 const isExpanded = (nodeId: string): boolean => {
     return expandedNodes.value.has(nodeId);
 };
+
+const getAccountTypeBadgeClass = (type: string): string => {
+    const classes: Record<string, string> = {
+        ASSET: 'bg-blue-500/10 text-blue-700 dark:bg-blue-500/20 dark:text-blue-100',
+        LIABILITY: 'bg-red-500/10 text-red-700 dark:bg-red-500/20 dark:text-red-100',
+        EQUITY: 'bg-purple-500/10 text-purple-700 dark:bg-purple-500/20 dark:text-purple-100',
+        REVENUE: 'bg-green-500/10 text-green-700 dark:bg-green-500/20 dark:text-green-100',
+        EXPENSE: 'bg-orange-500/10 text-orange-700 dark:bg-orange-500/20 dark:text-orange-100',
+    };
+    return classes[type] || 'bg-gray-500/10 text-gray-700 dark:bg-gray-500/20 dark:text-gray-100';
+};
 </script>
 
 <template>
     <div class="overflow-hidden rounded-lg border border-sidebar-border/60 shadow-sm dark:border-sidebar-border">
-        <div class="bg-muted/20 border-b border-sidebar-border/60 px-4 py-3">
-            <div class="grid grid-cols-12 gap-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                <div class="col-span-3">Account</div>
-                <div class="col-span-2 text-right">Type</div>
-                <div class="col-span-1 text-right">Category</div>
-                <div class="col-span-2 text-right">Balance</div>
-                <div class="col-span-2 text-right">Status</div>
-                <div class="col-span-2 text-right">Actions</div>
-            </div>
+        <div class="divide-y divide-sidebar-border/60">
+            <template v-for="node in nodes" :key="node.id">
+                <div
+                    class="group flex items-center gap-2 bg-background px-4 py-3 transition hover:bg-muted/30"
+                    :style="{ paddingLeft: `${props.level * 1.5 + 1}rem` }"
+                >
+                    <div class="flex items-center gap-2 flex-1 min-w-0">
+                        <Button
+                            v-if="node.has_children"
+                            variant="ghost"
+                            size="sm"
+                            class="h-6 w-6 p-0"
+                            @click="toggleNode(node.id)"
+                        >
+                            <ChevronRight
+                                v-if="!isExpanded(node.id)"
+                                class="h-4 w-4 transition-transform"
+                            />
+                            <ChevronDown
+                                v-else
+                                class="h-4 w-4 transition-transform"
+                            />
+                        </Button>
+                        <div v-else class="w-6" />
+                        <component
+                            :is="node.is_header ? Folder : FileText"
+                            class="h-4 w-4 flex-shrink-0 text-muted-foreground"
+                        />
+                        <Link
+                            :href="ChartOfAccountController.show.url(node.id)"
+                            class="font-mono text-sm text-primary underline-offset-4 transition hover:underline flex-shrink-0"
+                        >
+                            {{ node.code }}
+                        </Link>
+                        <Link
+                            :href="ChartOfAccountController.show.url(node.id)"
+                            class="font-medium text-sm text-foreground underline-offset-4 transition hover:underline flex-1 min-w-0 truncate"
+                        >
+                            {{ node.name }}
+                        </Link>
+                        <div class="flex items-center gap-2 flex-shrink-0">
+                            <Badge
+                                :class="`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ${getAccountTypeBadgeClass(node.account_type)}`"
+                            >
+                                {{ node.account_type }}
+                            </Badge>
+                            <Badge
+                                v-if="node.is_header"
+                                class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold bg-gray-500/10 text-gray-700 dark:bg-gray-500/20 dark:text-gray-100"
+                            >
+                                Header
+                            </Badge>
+                            <Badge
+                                v-if="node.is_cash"
+                                class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold bg-yellow-500/10 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-100"
+                            >
+                                Cash
+                            </Badge>
+                            <Badge
+                                v-if="!node.is_active"
+                                class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold bg-gray-500/10 text-gray-700 dark:bg-gray-500/20 dark:text-gray-100"
+                            >
+                                Inactive
+                            </Badge>
+                        </div>
+                    </div>
+                </div>
+                <TreeView
+                    v-if="node.has_children && node.children && isExpanded(node.id)"
+                    :nodes="node.children"
+                    :level="props.level + 1"
+                />
+            </template>
         </div>
-        <div v-if="treeNodes.length === 0" class="px-4 py-6 text-center text-sm text-muted-foreground">
+        <div
+            v-if="nodes.length === 0"
+            class="px-4 py-6 text-center text-sm text-muted-foreground"
+        >
             No accounts found.
-        </div>
-        <div v-else class="divide-y divide-sidebar-border/60">
-            <TreeNode
-                v-for="node in treeNodes"
-                :key="node.id"
-                :node="node"
-                :expanded="isExpanded(node.id)"
-                :is-expanded="isExpanded"
-                :toggle-node="toggleNode"
-                :on-delete-click="onDeleteClick"
-                :on-restore-click="onRestoreClick"
-                :on-force-delete-click="onForceDeleteClick"
-            />
         </div>
     </div>
 </template>
+

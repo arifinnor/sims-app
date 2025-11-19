@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import AccountController from '@/actions/App/Http/Controllers/Finance/AccountController';
+import ChartOfAccountController from '@/actions/App/Http/Controllers/Finance/ChartOfAccountController';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link, router } from '@inertiajs/vue3';
+import { Form, Head, Link } from '@inertiajs/vue3';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
@@ -17,103 +17,95 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Spinner } from '@/components/ui/spinner';
-import { ref } from 'vue';
-
-interface ParentAccount {
-    id: string;
-    accountNumber: string;
-    fullAccountNumber: string;
-    name: string;
-    type: string;
-}
+import { ref, watch } from 'vue';
 
 interface Props {
-    parentAccounts: ParentAccount[];
+    parentOptions: Array<{ id: string; code: string; name: string }>;
+    categories: Array<{ id: string; name: string }>;
+    accountTypes: string[];
+    normalBalances: string[];
 }
 
 const props = defineProps<Props>();
 
-const errors = ref<Record<string, string>>({});
-const processing = ref(false);
-const parentAccountId = ref<string>('__none__');
-const accountType = ref<string>('');
-const accountStatus = ref<string>('active');
-
-const handleSubmit = (e: Event) => {
-    const form = e.target as HTMLFormElement;
-    const formData = new FormData(form);
-    const parentId = parentAccountId.value || formData.get('parent_account_id');
-    const data: Record<string, any> = {
-        account_number: formData.get('account_number'),
-        name: formData.get('name'),
-        type: accountType.value || formData.get('type'),
-        category: formData.get('category') || null,
-        parent_account_id: parentId && parentId !== '__none__' ? parentId : null,
-        balance: formData.get('balance') ? parseFloat(formData.get('balance') as string) : null,
-        currency: formData.get('currency') || 'IDR',
-        status: accountStatus.value || formData.get('status') || 'active',
-        description: formData.get('description') || null,
-    };
-
-    processing.value = true;
-    router.post(AccountController.store.url(), data, {
-        preserveScroll: true,
-        onError: (pageErrors) => {
-            errors.value = pageErrors as Record<string, string>;
-            processing.value = false;
-        },
-        onSuccess: () => {
-            processing.value = false;
-        },
-    });
-};
-
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Chart of Accounts',
-        href: AccountController.index().url,
+        href: ChartOfAccountController.index().url,
     },
     {
-        title: 'Create account',
-        href: AccountController.create().url,
+        title: 'Create Account',
+        href: ChartOfAccountController.create().url,
     },
 ];
+
+const accountType = ref<string>('');
+const normalBalance = ref<string>('');
+
+watch(accountType, (newType) => {
+    // Auto-set normal balance based on account type
+    if (newType === 'ASSET' || newType === 'EXPENSE') {
+        normalBalance.value = 'DEBIT';
+    } else if (newType === 'LIABILITY' || newType === 'EQUITY' || newType === 'REVENUE') {
+        normalBalance.value = 'CREDIT';
+    }
+});
 </script>
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbs">
-        <Head title="Create account" />
+        <Head title="Create Account" />
 
         <Card>
             <CardHeader class="flex flex-col gap-4 pb-4 md:flex-row md:items-center md:justify-between">
                 <div class="w-full">
-                    <Heading title="Create account" description="Add a new account to the chart of accounts" />
+                    <Heading
+                        title="Create Account"
+                        description="Add a new account to the chart of accounts"
+                    />
                 </div>
                 <Button as-child variant="secondary" class="w-full md:w-auto">
-                    <Link :href="AccountController.index().url"> Cancel </Link>
+                    <Link :href="ChartOfAccountController.index().url"> Cancel </Link>
                 </Button>
             </CardHeader>
-            <form :action="AccountController.store.url()" method="post" class="contents" @submit.prevent="handleSubmit">
+            <Form
+                v-bind="ChartOfAccountController.store.form()"
+                class="contents"
+                :reset-on-success="[
+                    'code',
+                    'name',
+                    'description',
+                    'parent_id',
+                    'account_type',
+                    'normal_balance',
+                    'is_posting',
+                    'is_cash',
+                    'is_active',
+                ]"
+                v-slot="{ errors, processing }"
+            >
                 <CardContent class="grid gap-6">
                     <div class="grid gap-2">
-                        <Label for="account_number">Account Number</Label>
+                        <Label for="code">Account Code <span class="text-destructive">*</span></Label>
                         <Input
-                            id="account_number"
+                            id="code"
                             type="text"
-                            name="account_number"
+                            name="code"
                             required
-                            placeholder="e.g., 1000, 1010"
+                            placeholder="e.g., 1-1001"
                             autofocus
                         />
-                        <InputError :message="errors.account_number" />
-                        <p class="text-sm text-muted-foreground">
-                            Unique identifier for this account (e.g., 1000, 1010, 1011)
+                        <InputError :message="errors.code" />
+                        <p class="text-xs text-muted-foreground">
+                            Unique identifier for this account (e.g., 1-1001, 2-2000)
                         </p>
                     </div>
 
                     <div class="grid gap-2">
-                        <Label for="name">Name</Label>
+                        <Label for="name">Account Name <span class="text-destructive">*</span></Label>
                         <Input
                             id="name"
                             type="text"
@@ -125,128 +117,177 @@ const breadcrumbs: BreadcrumbItem[] = [
                     </div>
 
                     <div class="grid gap-2">
-                        <Label for="type">Type</Label>
-                        <input type="hidden" name="type" :value="accountType" required />
-                        <Select v-model="accountType" required>
-                            <SelectTrigger id="type">
-                                <SelectValue placeholder="Select account type" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="asset">Asset</SelectItem>
-                                <SelectItem value="liability">Liability</SelectItem>
-                                <SelectItem value="equity">Equity</SelectItem>
-                                <SelectItem value="revenue">Revenue</SelectItem>
-                                <SelectItem value="expense">Expense</SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <InputError :message="errors.type" />
-                    </div>
-
-                    <div class="grid gap-2">
-                        <Label for="category">Category</Label>
-                        <Input
-                            id="category"
-                            type="text"
-                            name="category"
-                            placeholder="e.g., current_asset, operating_expense"
-                        />
-                        <InputError :message="errors.category" />
-                        <p class="text-sm text-muted-foreground">
-                            Optional sub-classification (e.g., current_asset, fixed_asset, operating_expense)
-                        </p>
-                    </div>
-
-                    <div class="grid gap-2">
-                        <Label for="parent_account_id">Parent Account</Label>
-                        <input type="hidden" name="parent_account_id" :value="parentAccountId && parentAccountId !== '__none__' ? parentAccountId : ''" />
-                        <Select v-model="parentAccountId">
-                            <SelectTrigger id="parent_account_id">
-                                <SelectValue placeholder="Select parent account (optional)" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="__none__">None (Root Account)</SelectItem>
-                                <SelectItem
-                                    v-for="parent in props.parentAccounts"
-                                    :key="parent.id"
-                                    :value="parent.id"
-                                >
-                                    {{ parent.fullAccountNumber }} - {{ parent.name }} ({{ parent.type }})
-                                </SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <InputError :message="errors.parent_account_id" />
-                        <p class="text-sm text-muted-foreground">
-                            Optional - select a parent account to create a hierarchical structure
-                        </p>
-                    </div>
-
-                    <div class="grid gap-2">
-                        <Label for="balance">Balance</Label>
-                        <Input
-                            id="balance"
-                            type="number"
-                            name="balance"
-                            step="0.01"
-                            min="0"
-                            placeholder="0.00"
-                        />
-                        <InputError :message="errors.balance" />
-                        <p class="text-sm text-muted-foreground">
-                            Initial balance (defaults to 0.00)
-                        </p>
-                    </div>
-
-                    <div class="grid gap-2">
-                        <Label for="currency">Currency</Label>
-                        <Input
-                            id="currency"
-                            type="text"
-                            name="currency"
-                            placeholder="IDR"
-                            value="IDR"
-                            maxlength="3"
-                        />
-                        <InputError :message="errors.currency" />
-                        <p class="text-sm text-muted-foreground">
-                            Currency code (defaults to IDR)
-                        </p>
-                    </div>
-
-                    <div class="grid gap-2">
-                        <Label for="status">Status</Label>
-                        <input type="hidden" name="status" :value="accountStatus" />
-                        <Select v-model="accountStatus">
-                            <SelectTrigger id="status">
-                                <SelectValue placeholder="Select status" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="active">Active</SelectItem>
-                                <SelectItem value="inactive">Inactive</SelectItem>
-                                <SelectItem value="archived">Archived</SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <InputError :message="errors.status" />
-                    </div>
-
-                    <div class="grid gap-2">
                         <Label for="description">Description</Label>
-                        <textarea
+                        <Textarea
                             id="description"
                             name="description"
                             placeholder="Optional description"
                             rows="3"
-                            class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                         />
                         <InputError :message="errors.description" />
                     </div>
+
+                    <div class="grid gap-2">
+                        <Label for="category_id">Category</Label>
+                        <Select name="category_id">
+                            <SelectTrigger id="category_id">
+                                <SelectValue placeholder="Select a category (optional)" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="">None</SelectItem>
+                                <SelectItem
+                                    v-for="category in props.categories"
+                                    :key="category.id"
+                                    :value="String(category.id)"
+                                >
+                                    {{ category.name }}
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <InputError :message="errors.category_id" />
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label for="parent_id">Parent Account</Label>
+                        <Select name="parent_id">
+                            <SelectTrigger id="parent_id">
+                                <SelectValue placeholder="Select a parent account (optional)" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="">None (Root Level)</SelectItem>
+                                <SelectItem
+                                    v-for="parent in props.parentOptions"
+                                    :key="parent.id"
+                                    :value="String(parent.id)"
+                                >
+                                    {{ parent.code }} - {{ parent.name }}
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <InputError :message="errors.parent_id" />
+                        <p class="text-xs text-muted-foreground">
+                            Select a parent account to create a hierarchical structure
+                        </p>
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label for="account_type">Account Type <span class="text-destructive">*</span></Label>
+                        <Select v-model="accountType" name="account_type" required>
+                            <SelectTrigger id="account_type">
+                                <SelectValue placeholder="Select account type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem
+                                    v-for="type in props.accountTypes"
+                                    :key="type"
+                                    :value="type"
+                                >
+                                    {{ type }}
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <InputError :message="errors.account_type" />
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label for="normal_balance">Normal Balance <span class="text-destructive">*</span></Label>
+                        <Select v-model="normalBalance" name="normal_balance" required>
+                            <SelectTrigger id="normal_balance">
+                                <SelectValue placeholder="Select normal balance" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem
+                                    v-for="balance in props.normalBalances"
+                                    :key="balance"
+                                    :value="balance"
+                                >
+                                    {{ balance }}
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <InputError :message="errors.normal_balance" />
+                        <p class="text-xs text-muted-foreground">
+                            Assets and Expenses: DEBIT | Liabilities, Equity, and Revenue: CREDIT
+                        </p>
+                    </div>
+
+                    <div class="grid gap-4">
+                        <div class="flex items-center space-x-2">
+                            <Checkbox
+                                id="is_posting"
+                                name="is_posting"
+                                value="1"
+                                :checked="true"
+                            />
+                            <Label
+                                for="is_posting"
+                                class="text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                                Posting Account
+                            </Label>
+                        </div>
+                        <InputError :message="errors.is_posting" />
+                        <p class="text-xs text-muted-foreground -mt-2">
+                            Uncheck to create a header/folder account (non-posting)
+                        </p>
+                    </div>
+
+                    <div class="grid gap-4">
+                        <div class="flex items-center space-x-2">
+                            <Checkbox
+                                id="is_cash"
+                                name="is_cash"
+                                value="1"
+                            />
+                            <Label
+                                for="is_cash"
+                                class="text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                                Cash Account
+                            </Label>
+                        </div>
+                        <InputError :message="errors.is_cash" />
+                        <p class="text-xs text-muted-foreground -mt-2">
+                            Check if this account should appear in payment/receipt dropdowns
+                        </p>
+                    </div>
+
+                    <div class="grid gap-4">
+                        <div class="flex items-center space-x-2">
+                            <Checkbox
+                                id="is_active"
+                                name="is_active"
+                                value="1"
+                                :checked="true"
+                            />
+                            <Label
+                                for="is_active"
+                                class="text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                                Active
+                            </Label>
+                        </div>
+                        <InputError :message="errors.is_active" />
+                        <p class="text-xs text-muted-foreground -mt-2">
+                            Uncheck to deactivate this account
+                        </p>
+                    </div>
                 </CardContent>
-                <CardFooter class="justify-end">
-                    <Button type="submit" :disabled="processing" data-test="create-account-button">
-                        <Spinner v-if="processing" />
-                        Create account
+
+                <CardFooter class="flex flex-col gap-3 md:flex-row md:items-center md:justify-end">
+                    <Button
+                        type="submit"
+                        :disabled="processing"
+                        class="w-full md:w-auto"
+                    >
+                        <Spinner
+                            v-if="processing"
+                            class="mr-2 h-4 w-4"
+                        />
+                        {{ processing ? 'Creating...' : 'Create Account' }}
                     </Button>
                 </CardFooter>
-            </form>
+            </Form>
         </Card>
     </AppLayout>
 </template>

@@ -17,7 +17,7 @@ import { GraduationCap, LayoutGrid, User, Users, Wallet } from 'lucide-vue-next'
 import StudentController from '@/actions/App/Http/Controllers/StudentController';
 import TeacherController from '@/actions/App/Http/Controllers/TeacherController';
 import UserController from '@/actions/App/Http/Controllers/UserController';
-import AccountController from '@/actions/App/Http/Controllers/Finance/AccountController';
+import ChartOfAccountController from '@/actions/App/Http/Controllers/Finance/ChartOfAccountController';
 import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
@@ -43,7 +43,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Chart of Accounts',
-        href: AccountController.index().url,
+        href: ChartOfAccountController.index().url,
         icon: Wallet,
     },
 ];

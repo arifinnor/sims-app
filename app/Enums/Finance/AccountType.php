@@ -4,11 +4,11 @@ namespace App\Enums\Finance;
 
 enum AccountType: string
 {
-    case Asset = 'asset';
-    case Liability = 'liability';
-    case Equity = 'equity';
-    case Revenue = 'revenue';
-    case Expense = 'expense';
+    case Asset = 'ASSET';
+    case Liability = 'LIABILITY';
+    case Equity = 'EQUITY';
+    case Revenue = 'REVENUE';
+    case Expense = 'EXPENSE';
 
     /**
      * Get all enum values as an array.

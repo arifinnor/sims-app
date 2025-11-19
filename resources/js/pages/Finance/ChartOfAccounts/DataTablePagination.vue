@@ -49,16 +49,6 @@ watch(selectedPerPage, (newValue) => {
         url.searchParams.set('search', currentSearch);
     }
 
-    const currentType = new URLSearchParams(window.location.search).get('type');
-    if (currentType && currentType !== '__all__') {
-        url.searchParams.set('type', currentType);
-    }
-
-    const currentStatus = new URLSearchParams(window.location.search).get('status');
-    if (currentStatus && currentStatus !== '__all__') {
-        url.searchParams.set('status', currentStatus);
-    }
-
     router.visit(url.pathname + url.search, {
         only: ['accounts'],
         preserveState: false,
@@ -80,16 +70,6 @@ const getNextUrl = (): string | null => {
         url.searchParams.set('search', currentSearch);
     }
 
-    const currentType = new URLSearchParams(window.location.search).get('type');
-    if (currentType && currentType !== '__all__') {
-        url.searchParams.set('type', currentType);
-    }
-
-    const currentStatus = new URLSearchParams(window.location.search).get('status');
-    if (currentStatus && currentStatus !== '__all__') {
-        url.searchParams.set('status', currentStatus);
-    }
-
     const currentPerPage = new URLSearchParams(window.location.search).get('per_page');
     if (currentPerPage) {
         url.searchParams.set('per_page', currentPerPage);
@@ -109,16 +89,6 @@ const getPrevUrl = (): string | null => {
     const currentSearch = new URLSearchParams(window.location.search).get('search');
     if (currentSearch) {
         url.searchParams.set('search', currentSearch);
-    }
-
-    const currentType = new URLSearchParams(window.location.search).get('type');
-    if (currentType && currentType !== '__all__') {
-        url.searchParams.set('type', currentType);
-    }
-
-    const currentStatus = new URLSearchParams(window.location.search).get('status');
-    if (currentStatus && currentStatus !== '__all__') {
-        url.searchParams.set('status', currentStatus);
     }
 
     const currentPerPage = new URLSearchParams(window.location.search).get('per_page');

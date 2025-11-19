@@ -1,24 +1,24 @@
 <script setup lang="ts">
 import { Link, Form, router } from '@inertiajs/vue3';
 import { Button } from '@/components/ui/button';
-import AccountController from '@/actions/App/Http/Controllers/Finance/AccountController';
-import type { Account } from './columns';
+import ChartOfAccountController from '@/actions/App/Http/Controllers/Finance/ChartOfAccountController';
+import type { ChartOfAccount } from './columns';
 import { computed } from 'vue';
 
 interface Props {
-    account: Account;
+    account: ChartOfAccount;
     onDeleteClick: (
-        account: Account,
+        account: ChartOfAccount,
         submit: () => void,
         processing: () => boolean,
     ) => void;
     onRestoreClick?: (
-        account: Account,
+        account: ChartOfAccount,
         submit: () => void,
         processing: () => boolean,
     ) => void;
     onForceDeleteClick?: (
-        account: Account,
+        account: ChartOfAccount,
         submit: () => void,
         processing: () => boolean,
     ) => void;
@@ -26,10 +26,10 @@ interface Props {
 
 const props = defineProps<Props>();
 
-const isDeleted = computed(() => !!props.account.deletedAt);
+const isDeleted = computed(() => !!props.account.deleted_at);
 
 const handleRestore = () => {
-    router.post(`/finance/accounts/${props.account.id}/restore`, {}, {
+    router.post(`/finance/chart-of-accounts/${props.account.id}/restore`, {}, {
         preserveScroll: true,
         onSuccess: () => {
             router.reload({ only: ['accounts'] });
@@ -38,7 +38,7 @@ const handleRestore = () => {
 };
 
 const handleForceDelete = () => {
-    router.delete(`/finance/accounts/${props.account.id}/force-delete`, {
+    router.delete(`/finance/chart-of-accounts/${props.account.id}/force-delete`, {
         preserveScroll: true,
         onSuccess: () => {
             router.reload({ only: ['accounts'] });
@@ -51,12 +51,12 @@ const handleForceDelete = () => {
     <div class="flex items-center justify-end gap-2">
         <template v-if="!isDeleted">
             <Button as-child size="sm" variant="secondary">
-                <Link :href="AccountController.edit.url(account.id)">
+                <Link :href="ChartOfAccountController.edit.url(account.id)">
                     Edit
                 </Link>
             </Button>
             <Form
-                :action="AccountController.destroy.url(account.id)"
+                :action="ChartOfAccountController.destroy.url(account.id)"
                 method="delete"
                 class="inline-flex"
                 v-slot="{ processing, submit }"
