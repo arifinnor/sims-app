@@ -221,6 +221,36 @@ class ChartOfAccountSeeder extends Seeder
                 'is_cash' => false,
                 'parent_code' => '2-1000',
             ],
+            [
+                'code' => '2-1103',
+                'name' => 'Tabungan Siswa',
+                'category' => 'Current Liabilities',
+                'account_type' => AccountType::Liability,
+                'normal_balance' => NormalBalance::Credit,
+                'is_posting' => true,
+                'is_cash' => false,
+                'parent_code' => '2-1000',
+            ],
+            [
+                'code' => '2-1104',
+                'name' => 'Pendapatan Diterima Dimuka',
+                'category' => 'Current Liabilities',
+                'account_type' => AccountType::Liability,
+                'normal_balance' => NormalBalance::Credit,
+                'is_posting' => true,
+                'is_cash' => false,
+                'parent_code' => '2-1000',
+            ],
+            [
+                'code' => '2-1105',
+                'name' => 'Utang PPh 21',
+                'category' => 'Current Liabilities',
+                'account_type' => AccountType::Liability,
+                'normal_balance' => NormalBalance::Credit,
+                'is_posting' => true,
+                'is_cash' => false,
+                'parent_code' => '2-1000',
+            ],
 
             // REVENUE - Level 1 Header
             [
@@ -277,6 +307,60 @@ class ChartOfAccountSeeder extends Seeder
                 'is_cash' => false,
                 'parent_code' => '4-1000',
             ],
+            [
+                'code' => '4-1104',
+                'name' => 'Penjualan Seragam & Buku',
+                'category' => 'Operational Revenue',
+                'account_type' => AccountType::Revenue,
+                'normal_balance' => NormalBalance::Credit,
+                'is_posting' => true,
+                'is_cash' => false,
+                'parent_code' => '4-1000',
+            ],
+            [
+                'code' => '4-1105',
+                'name' => 'Pendapatan Ekskul/Kegiatan',
+                'category' => 'Operational Revenue',
+                'account_type' => AccountType::Revenue,
+                'normal_balance' => NormalBalance::Credit,
+                'is_posting' => true,
+                'is_cash' => false,
+                'parent_code' => '4-1000',
+            ],
+
+            // Other Revenue - Level 2 Header
+            [
+                'code' => '4-2000',
+                'name' => 'Other Revenue',
+                'category' => 'Other Revenue',
+                'account_type' => AccountType::Revenue,
+                'normal_balance' => NormalBalance::Credit,
+                'is_posting' => false,
+                'is_cash' => false,
+                'parent_code' => '4-0000',
+            ],
+
+            // Other Revenue - Detail Accounts
+            [
+                'code' => '4-2101',
+                'name' => 'Dana BOS (Bantuan Operasional Sekolah)',
+                'category' => 'Other Revenue',
+                'account_type' => AccountType::Revenue,
+                'normal_balance' => NormalBalance::Credit,
+                'is_posting' => true,
+                'is_cash' => false,
+                'parent_code' => '4-2000',
+            ],
+            [
+                'code' => '4-2102',
+                'name' => 'Sumbangan/Donasi',
+                'category' => 'Other Revenue',
+                'account_type' => AccountType::Revenue,
+                'normal_balance' => NormalBalance::Credit,
+                'is_posting' => true,
+                'is_cash' => false,
+                'parent_code' => '4-2000',
+            ],
 
             // EXPENSES - Level 1 Header
             [
@@ -323,6 +407,16 @@ class ChartOfAccountSeeder extends Seeder
                 'is_cash' => false,
                 'parent_code' => '6-1000',
             ],
+            [
+                'code' => '6-1108',
+                'name' => 'Beban Perlengkapan/ATK',
+                'category' => 'Operational Expenses',
+                'account_type' => AccountType::Expense,
+                'normal_balance' => NormalBalance::Debit,
+                'is_posting' => true,
+                'is_cash' => false,
+                'parent_code' => '6-1000',
+            ],
 
             // General Expenses - Level 2 Header
             [
@@ -337,6 +431,56 @@ class ChartOfAccountSeeder extends Seeder
             ],
 
             // General Expenses - Detail Accounts
+            [
+                'code' => '6-1103',
+                'name' => 'Beban Listrik, Air & Internet',
+                'category' => 'Operational Expenses',
+                'account_type' => AccountType::Expense,
+                'normal_balance' => NormalBalance::Debit,
+                'is_posting' => true,
+                'is_cash' => false,
+                'parent_code' => '6-2000',
+            ],
+            [
+                'code' => '6-1104',
+                'name' => 'Beban Pemeliharaan Gedung',
+                'category' => 'Operational Expenses',
+                'account_type' => AccountType::Expense,
+                'normal_balance' => NormalBalance::Debit,
+                'is_posting' => true,
+                'is_cash' => false,
+                'parent_code' => '6-2000',
+            ],
+            [
+                'code' => '6-1105',
+                'name' => 'Beban Keamanan & Kebersihan',
+                'category' => 'Operational Expenses',
+                'account_type' => AccountType::Expense,
+                'normal_balance' => NormalBalance::Debit,
+                'is_posting' => true,
+                'is_cash' => false,
+                'parent_code' => '6-2000',
+            ],
+            [
+                'code' => '6-1106',
+                'name' => 'Beban Pemasaran & Promosi',
+                'category' => 'Operational Expenses',
+                'account_type' => AccountType::Expense,
+                'normal_balance' => NormalBalance::Debit,
+                'is_posting' => true,
+                'is_cash' => false,
+                'parent_code' => '6-2000',
+            ],
+            [
+                'code' => '6-1107',
+                'name' => 'Beban Penyusutan Aset',
+                'category' => 'Operational Expenses',
+                'account_type' => AccountType::Expense,
+                'normal_balance' => NormalBalance::Debit,
+                'is_posting' => true,
+                'is_cash' => false,
+                'parent_code' => '6-2000',
+            ],
             [
                 'code' => '6-2101',
                 'name' => 'Beban Listrik & Air',
