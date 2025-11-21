@@ -9,16 +9,15 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
-interface TransactionEntryConfig {
+interface TransactionAccount {
     id: string;
     transaction_type_id: string;
-    config_key: string;
-    ui_label: string;
-    position: string;
-    account_type_filter: string | null;
-    account_id: string | null;
-    is_required: boolean;
-    account?: {
+    role: string;
+    label: string;
+    direction: string;
+    account_type: string;
+    chart_of_account_id: string | null;
+    chart_of_account?: {
         id: string;
         code: string;
         name: string;
@@ -35,7 +34,7 @@ interface TransactionType {
     is_active: boolean;
     created_at: string;
     updated_at: string;
-    configs: TransactionEntryConfig[];
+    accounts: TransactionAccount[];
 }
 
 interface Props {
@@ -77,10 +76,10 @@ const getCategoryBadgeClass = (category: string): string => {
     return classes[category] || 'bg-gray-500/10 text-gray-700 dark:bg-gray-500/20 dark:text-gray-100';
 };
 
-const getPositionBadgeClass = (position: string): string => {
-    return position === 'DEBIT'
-        ? 'bg-blue-500/10 text-blue-700 dark:bg-blue-500/20 dark:text-blue-100'
-        : 'bg-green-500/10 text-green-700 dark:bg-green-500/20 dark:text-green-100';
+const getDirectionBadgeClass = (direction: string): string => {
+    return direction === 'DEBIT'
+        ? 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-100'
+        : 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100';
 };
 </script>
 
@@ -197,53 +196,42 @@ const getPositionBadgeClass = (position: string): string => {
                     </dl>
 
                     <div
-                        v-if="props.transactionType.configs.length > 0"
+                        v-if="props.transactionType.accounts.length > 0"
                         class="rounded-lg border border-sidebar-border/60 p-4 dark:border-sidebar-border"
                     >
                         <dt class="text-sm font-medium text-muted-foreground mb-4">
-                            Account Mappings ({{ props.transactionType.configs.length }})
+                            Account Mappings ({{ props.transactionType.accounts.length }})
                         </dt>
                         <dd class="space-y-3">
                             <div
-                                v-for="config in props.transactionType.configs"
-                                :key="config.id"
+                                v-for="account in props.transactionType.accounts"
+                                :key="account.id"
                                 class="rounded-md border border-sidebar-border/60 p-4 dark:border-sidebar-border"
                             >
                                 <div class="flex items-start justify-between gap-4">
                                     <div class="flex-1 space-y-2">
                                         <div class="flex items-center gap-2">
                                             <h4 class="text-sm font-semibold">
-                                                {{ config.ui_label }}
+                                                {{ account.label }}
                                             </h4>
-                                            <Badge
-                                                v-if="config.is_required"
-                                                class="bg-orange-500/10 text-orange-700 dark:bg-orange-500/20 dark:text-orange-100"
-                                            >
-                                                Required
+                                            <Badge :class="getDirectionBadgeClass(account.direction)">
+                                                {{ account.direction }}
                                             </Badge>
                                         </div>
                                         <div class="flex flex-wrap items-center gap-2">
-                                            <Badge
-                                                :class="`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ${getPositionBadgeClass(config.position)}`"
-                                            >
-                                                {{ config.position }}
-                                            </Badge>
-                                            <span
-                                                v-if="config.account_type_filter"
-                                                class="text-xs text-muted-foreground"
-                                            >
-                                                Filter: {{ config.account_type_filter }}
+                                            <span class="text-xs text-muted-foreground">
+                                                Type: {{ account.account_type }}
                                             </span>
                                         </div>
                                         <div
-                                            v-if="config.account"
+                                            v-if="account.chart_of_account"
                                             class="rounded-md bg-muted p-3"
                                         >
                                             <div class="font-mono text-sm font-semibold">
-                                                {{ config.account.code }}
+                                                {{ account.chart_of_account.code }}
                                             </div>
                                             <div class="text-sm text-muted-foreground">
-                                                {{ config.account.name }}
+                                                {{ account.chart_of_account.name }}
                                             </div>
                                         </div>
                                         <div

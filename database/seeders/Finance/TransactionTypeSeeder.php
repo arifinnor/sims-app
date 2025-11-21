@@ -2,10 +2,11 @@
 
 namespace Database\Seeders\Finance;
 
+use App\Enums\Finance\AccountType;
 use App\Enums\Finance\EntryPosition;
 use App\Enums\Finance\TransactionCategory;
 use App\Models\Finance\ChartOfAccount;
-use App\Models\Finance\TransactionEntryConfig;
+use App\Models\Finance\TransactionAccount;
 use App\Models\Finance\TransactionType;
 use Illuminate\Database\Seeder;
 
@@ -43,25 +44,23 @@ class TransactionTypeSeeder extends Seeder
             ]
         );
 
-        TransactionEntryConfig::query()->updateOrCreate(
-            ['transaction_type_id' => $transactionType->id, 'config_key' => 'receivable_debit'],
+        TransactionAccount::query()->updateOrCreate(
+            ['transaction_type_id' => $transactionType->id, 'role' => 'receivable_debit'],
             [
-                'ui_label' => 'Akun Piutang Siswa',
-                'position' => EntryPosition::Debit,
-                'account_type_filter' => 'ASSET',
-                'account_id' => $this->getAccountId('1-1103'), // Piutang Siswa
-                'is_required' => true,
+                'label' => 'Akun Piutang Siswa',
+                'direction' => EntryPosition::Debit,
+                'account_type' => AccountType::Asset,
+                'chart_of_account_id' => $this->getAccountId('1-1103'), // Piutang Siswa
             ]
         );
 
-        TransactionEntryConfig::query()->updateOrCreate(
-            ['transaction_type_id' => $transactionType->id, 'config_key' => 'revenue_credit'],
+        TransactionAccount::query()->updateOrCreate(
+            ['transaction_type_id' => $transactionType->id, 'role' => 'revenue_credit'],
             [
-                'ui_label' => 'Akun Pendapatan SPP',
-                'position' => EntryPosition::Credit,
-                'account_type_filter' => 'REVENUE',
-                'account_id' => $this->getAccountId('4-1101'), // Pendapatan SPP
-                'is_required' => true,
+                'label' => 'Akun Pendapatan SPP',
+                'direction' => EntryPosition::Credit,
+                'account_type' => AccountType::Revenue,
+                'chart_of_account_id' => $this->getAccountId('4-1101'), // Pendapatan SPP
             ]
         );
     }
@@ -82,25 +81,23 @@ class TransactionTypeSeeder extends Seeder
         );
 
         // Dynamic debit side (Cash/Bank) - user selects at runtime
-        TransactionEntryConfig::query()->updateOrCreate(
-            ['transaction_type_id' => $transactionType->id, 'config_key' => 'cash_debit'],
+        TransactionAccount::query()->updateOrCreate(
+            ['transaction_type_id' => $transactionType->id, 'role' => 'cash_debit'],
             [
-                'ui_label' => 'Akun Kas/Bank',
-                'position' => EntryPosition::Debit,
-                'account_type_filter' => 'ASSET',
-                'account_id' => null, // User selects cash/bank account
-                'is_required' => true,
+                'label' => 'Akun Kas/Bank',
+                'direction' => EntryPosition::Debit,
+                'account_type' => AccountType::Asset,
+                'chart_of_account_id' => null, // User selects cash/bank account
             ]
         );
 
-        TransactionEntryConfig::query()->updateOrCreate(
-            ['transaction_type_id' => $transactionType->id, 'config_key' => 'receivable_credit'],
+        TransactionAccount::query()->updateOrCreate(
+            ['transaction_type_id' => $transactionType->id, 'role' => 'receivable_credit'],
             [
-                'ui_label' => 'Akun Piutang Siswa',
-                'position' => EntryPosition::Credit,
-                'account_type_filter' => 'ASSET',
-                'account_id' => $this->getAccountId('1-1103'), // Piutang Siswa
-                'is_required' => true,
+                'label' => 'Akun Piutang Siswa',
+                'direction' => EntryPosition::Credit,
+                'account_type' => AccountType::Asset,
+                'chart_of_account_id' => $this->getAccountId('1-1103'), // Piutang Siswa
             ]
         );
     }
@@ -120,25 +117,23 @@ class TransactionTypeSeeder extends Seeder
             ]
         );
 
-        TransactionEntryConfig::query()->updateOrCreate(
-            ['transaction_type_id' => $transactionType->id, 'config_key' => 'receivable_debit'],
+        TransactionAccount::query()->updateOrCreate(
+            ['transaction_type_id' => $transactionType->id, 'role' => 'receivable_debit'],
             [
-                'ui_label' => 'Akun Piutang Siswa',
-                'position' => EntryPosition::Debit,
-                'account_type_filter' => 'ASSET',
-                'account_id' => $this->getAccountId('1-1103'), // Piutang Siswa
-                'is_required' => true,
+                'label' => 'Akun Piutang Siswa',
+                'direction' => EntryPosition::Debit,
+                'account_type' => AccountType::Asset,
+                'chart_of_account_id' => $this->getAccountId('1-1103'), // Piutang Siswa
             ]
         );
 
-        TransactionEntryConfig::query()->updateOrCreate(
-            ['transaction_type_id' => $transactionType->id, 'config_key' => 'revenue_credit'],
+        TransactionAccount::query()->updateOrCreate(
+            ['transaction_type_id' => $transactionType->id, 'role' => 'revenue_credit'],
             [
-                'ui_label' => 'Akun Pendapatan Uang Pangkal',
-                'position' => EntryPosition::Credit,
-                'account_type_filter' => 'REVENUE',
-                'account_id' => $this->getAccountId('4-1102'), // Pendapatan Uang Pangkal
-                'is_required' => true,
+                'label' => 'Akun Pendapatan Uang Pangkal',
+                'direction' => EntryPosition::Credit,
+                'account_type' => AccountType::Revenue,
+                'chart_of_account_id' => $this->getAccountId('4-1102'), // Pendapatan Uang Pangkal
             ]
         );
     }
@@ -159,25 +154,23 @@ class TransactionTypeSeeder extends Seeder
         );
 
         // Dynamic debit side (Cash/Bank) - user selects at runtime
-        TransactionEntryConfig::query()->updateOrCreate(
-            ['transaction_type_id' => $transactionType->id, 'config_key' => 'cash_debit'],
+        TransactionAccount::query()->updateOrCreate(
+            ['transaction_type_id' => $transactionType->id, 'role' => 'cash_debit'],
             [
-                'ui_label' => 'Akun Kas/Bank',
-                'position' => EntryPosition::Debit,
-                'account_type_filter' => 'ASSET',
-                'account_id' => null, // User selects cash/bank account
-                'is_required' => true,
+                'label' => 'Akun Kas/Bank',
+                'direction' => EntryPosition::Debit,
+                'account_type' => AccountType::Asset,
+                'chart_of_account_id' => null, // User selects cash/bank account
             ]
         );
 
-        TransactionEntryConfig::query()->updateOrCreate(
-            ['transaction_type_id' => $transactionType->id, 'config_key' => 'revenue_credit'],
+        TransactionAccount::query()->updateOrCreate(
+            ['transaction_type_id' => $transactionType->id, 'role' => 'revenue_credit'],
             [
-                'ui_label' => 'Pendapatan Seragam & Buku',
-                'position' => EntryPosition::Credit,
-                'account_type_filter' => 'REVENUE',
-                'account_id' => $this->getAccountId('4-1104'), // Penjualan Seragam & Buku
-                'is_required' => true,
+                'label' => 'Pendapatan Seragam & Buku',
+                'direction' => EntryPosition::Credit,
+                'account_type' => AccountType::Revenue,
+                'chart_of_account_id' => $this->getAccountId('4-1104'), // Penjualan Seragam & Buku
             ]
         );
     }
@@ -198,25 +191,23 @@ class TransactionTypeSeeder extends Seeder
         );
 
         // Dynamic debit side (Cash/Bank) - user selects at runtime
-        TransactionEntryConfig::query()->updateOrCreate(
-            ['transaction_type_id' => $transactionType->id, 'config_key' => 'cash_debit'],
+        TransactionAccount::query()->updateOrCreate(
+            ['transaction_type_id' => $transactionType->id, 'role' => 'cash_debit'],
             [
-                'ui_label' => 'Akun Kas/Bank',
-                'position' => EntryPosition::Debit,
-                'account_type_filter' => 'ASSET',
-                'account_id' => null, // User selects cash/bank account
-                'is_required' => true,
+                'label' => 'Akun Kas/Bank',
+                'direction' => EntryPosition::Debit,
+                'account_type' => AccountType::Asset,
+                'chart_of_account_id' => null, // User selects cash/bank account
             ]
         );
 
-        TransactionEntryConfig::query()->updateOrCreate(
-            ['transaction_type_id' => $transactionType->id, 'config_key' => 'liability_credit'],
+        TransactionAccount::query()->updateOrCreate(
+            ['transaction_type_id' => $transactionType->id, 'role' => 'liability_credit'],
             [
-                'ui_label' => 'Tabungan Siswa',
-                'position' => EntryPosition::Credit,
-                'account_type_filter' => 'LIABILITY',
-                'account_id' => $this->getAccountId('2-1103'), // Tabungan Siswa
-                'is_required' => true,
+                'label' => 'Tabungan Siswa',
+                'direction' => EntryPosition::Credit,
+                'account_type' => AccountType::Liability,
+                'chart_of_account_id' => $this->getAccountId('2-1103'), // Tabungan Siswa
             ]
         );
     }
@@ -236,37 +227,34 @@ class TransactionTypeSeeder extends Seeder
             ]
         );
 
-        TransactionEntryConfig::query()->updateOrCreate(
-            ['transaction_type_id' => $transactionType->id, 'config_key' => 'salary_expense_debit'],
+        TransactionAccount::query()->updateOrCreate(
+            ['transaction_type_id' => $transactionType->id, 'role' => 'salary_expense_debit'],
             [
-                'ui_label' => 'Beban Gaji Guru',
-                'position' => EntryPosition::Debit,
-                'account_type_filter' => 'EXPENSE',
-                'account_id' => $this->getAccountId('6-1101'), // Beban Gaji Guru
-                'is_required' => true,
+                'label' => 'Beban Gaji Guru',
+                'direction' => EntryPosition::Debit,
+                'account_type' => AccountType::Expense,
+                'chart_of_account_id' => $this->getAccountId('6-1101'), // Beban Gaji Guru
             ]
         );
 
-        TransactionEntryConfig::query()->updateOrCreate(
-            ['transaction_type_id' => $transactionType->id, 'config_key' => 'tax_payable_credit'],
+        TransactionAccount::query()->updateOrCreate(
+            ['transaction_type_id' => $transactionType->id, 'role' => 'tax_payable_credit'],
             [
-                'ui_label' => 'Utang PPh 21',
-                'position' => EntryPosition::Credit,
-                'account_type_filter' => 'LIABILITY',
-                'account_id' => $this->getAccountId('2-1105'), // Utang PPh 21
-                'is_required' => false,
+                'label' => 'Utang PPh 21',
+                'direction' => EntryPosition::Credit,
+                'account_type' => AccountType::Liability,
+                'chart_of_account_id' => $this->getAccountId('2-1105'), // Utang PPh 21
             ]
         );
 
         // Dynamic credit side (Cash/Bank) for net salary payment
-        TransactionEntryConfig::query()->updateOrCreate(
-            ['transaction_type_id' => $transactionType->id, 'config_key' => 'cash_credit'],
+        TransactionAccount::query()->updateOrCreate(
+            ['transaction_type_id' => $transactionType->id, 'role' => 'cash_credit'],
             [
-                'ui_label' => 'Akun Kas/Bank (Gaji Bersih)',
-                'position' => EntryPosition::Credit,
-                'account_type_filter' => 'ASSET',
-                'account_id' => null, // User selects cash/bank account
-                'is_required' => true,
+                'label' => 'Akun Kas/Bank (Gaji Bersih)',
+                'direction' => EntryPosition::Credit,
+                'account_type' => AccountType::Asset,
+                'chart_of_account_id' => null, // User selects cash/bank account
             ]
         );
     }
@@ -286,26 +274,24 @@ class TransactionTypeSeeder extends Seeder
             ]
         );
 
-        TransactionEntryConfig::query()->updateOrCreate(
-            ['transaction_type_id' => $transactionType->id, 'config_key' => 'expense_debit'],
+        TransactionAccount::query()->updateOrCreate(
+            ['transaction_type_id' => $transactionType->id, 'role' => 'expense_debit'],
             [
-                'ui_label' => 'Beban Listrik, Air & Internet',
-                'position' => EntryPosition::Debit,
-                'account_type_filter' => 'EXPENSE',
-                'account_id' => $this->getAccountId('6-1103'), // Beban Listrik, Air & Internet
-                'is_required' => true,
+                'label' => 'Beban Listrik, Air & Internet',
+                'direction' => EntryPosition::Debit,
+                'account_type' => AccountType::Expense,
+                'chart_of_account_id' => $this->getAccountId('6-1103'), // Beban Listrik, Air & Internet
             ]
         );
 
         // Dynamic credit side (Cash/Bank) - user selects at runtime
-        TransactionEntryConfig::query()->updateOrCreate(
-            ['transaction_type_id' => $transactionType->id, 'config_key' => 'cash_credit'],
+        TransactionAccount::query()->updateOrCreate(
+            ['transaction_type_id' => $transactionType->id, 'role' => 'cash_credit'],
             [
-                'ui_label' => 'Akun Kas/Bank',
-                'position' => EntryPosition::Credit,
-                'account_type_filter' => 'ASSET',
-                'account_id' => null, // User selects cash/bank account
-                'is_required' => true,
+                'label' => 'Akun Kas/Bank',
+                'direction' => EntryPosition::Credit,
+                'account_type' => AccountType::Asset,
+                'chart_of_account_id' => null, // User selects cash/bank account
             ]
         );
     }
@@ -325,25 +311,23 @@ class TransactionTypeSeeder extends Seeder
             ]
         );
 
-        TransactionEntryConfig::query()->updateOrCreate(
-            ['transaction_type_id' => $transactionType->id, 'config_key' => 'depreciation_expense_debit'],
+        TransactionAccount::query()->updateOrCreate(
+            ['transaction_type_id' => $transactionType->id, 'role' => 'depreciation_expense_debit'],
             [
-                'ui_label' => 'Beban Penyusutan Aset',
-                'position' => EntryPosition::Debit,
-                'account_type_filter' => 'EXPENSE',
-                'account_id' => $this->getAccountId('6-1107'), // Beban Penyusutan Aset
-                'is_required' => true,
+                'label' => 'Beban Penyusutan Aset',
+                'direction' => EntryPosition::Debit,
+                'account_type' => AccountType::Expense,
+                'chart_of_account_id' => $this->getAccountId('6-1107'), // Beban Penyusutan Aset
             ]
         );
 
-        TransactionEntryConfig::query()->updateOrCreate(
-            ['transaction_type_id' => $transactionType->id, 'config_key' => 'accumulated_depreciation_credit'],
+        TransactionAccount::query()->updateOrCreate(
+            ['transaction_type_id' => $transactionType->id, 'role' => 'accumulated_depreciation_credit'],
             [
-                'ui_label' => 'Akumulasi Penyusutan',
-                'position' => EntryPosition::Credit,
-                'account_type_filter' => 'ASSET',
-                'account_id' => $this->getAccountId('1-2103'), // Akumulasi Penyusutan
-                'is_required' => true,
+                'label' => 'Akumulasi Penyusutan',
+                'direction' => EntryPosition::Credit,
+                'account_type' => AccountType::Asset,
+                'chart_of_account_id' => $this->getAccountId('1-2103'), // Akumulasi Penyusutan
             ]
         );
     }
@@ -363,25 +347,23 @@ class TransactionTypeSeeder extends Seeder
             ]
         );
 
-        TransactionEntryConfig::query()->updateOrCreate(
-            ['transaction_type_id' => $transactionType->id, 'config_key' => 'expense_debit'],
+        TransactionAccount::query()->updateOrCreate(
+            ['transaction_type_id' => $transactionType->id, 'role' => 'expense_debit'],
             [
-                'ui_label' => 'Beban Perlengkapan/ATK',
-                'position' => EntryPosition::Debit,
-                'account_type_filter' => 'EXPENSE',
-                'account_id' => $this->getAccountId('6-1108'), // Beban Perlengkapan/ATK
-                'is_required' => true,
+                'label' => 'Beban Perlengkapan/ATK',
+                'direction' => EntryPosition::Debit,
+                'account_type' => AccountType::Expense,
+                'chart_of_account_id' => $this->getAccountId('6-1108'), // Beban Perlengkapan/ATK
             ]
         );
 
-        TransactionEntryConfig::query()->updateOrCreate(
-            ['transaction_type_id' => $transactionType->id, 'config_key' => 'inventory_credit'],
+        TransactionAccount::query()->updateOrCreate(
+            ['transaction_type_id' => $transactionType->id, 'role' => 'inventory_credit'],
             [
-                'ui_label' => 'Perlengkapan/Inventory',
-                'position' => EntryPosition::Credit,
-                'account_type_filter' => 'ASSET',
-                'account_id' => $this->getAccountId('1-1104'), // Perlengkapan/Inventory
-                'is_required' => true,
+                'label' => 'Perlengkapan/Inventory',
+                'direction' => EntryPosition::Credit,
+                'account_type' => AccountType::Asset,
+                'chart_of_account_id' => $this->getAccountId('1-1104'), // Perlengkapan/Inventory
             ]
         );
     }
@@ -401,25 +383,23 @@ class TransactionTypeSeeder extends Seeder
             ]
         );
 
-        TransactionEntryConfig::query()->updateOrCreate(
-            ['transaction_type_id' => $transactionType->id, 'config_key' => 'receivable_debit'],
+        TransactionAccount::query()->updateOrCreate(
+            ['transaction_type_id' => $transactionType->id, 'role' => 'receivable_debit'],
             [
-                'ui_label' => 'Piutang Denda',
-                'position' => EntryPosition::Debit,
-                'account_type_filter' => 'ASSET',
-                'account_id' => $this->getAccountId('1-1103'), // Piutang Siswa
-                'is_required' => true,
+                'label' => 'Piutang Denda',
+                'direction' => EntryPosition::Debit,
+                'account_type' => AccountType::Asset,
+                'chart_of_account_id' => $this->getAccountId('1-1103'), // Piutang Siswa
             ]
         );
 
-        TransactionEntryConfig::query()->updateOrCreate(
-            ['transaction_type_id' => $transactionType->id, 'config_key' => 'fine_revenue_credit'],
+        TransactionAccount::query()->updateOrCreate(
+            ['transaction_type_id' => $transactionType->id, 'role' => 'fine_revenue_credit'],
             [
-                'ui_label' => 'Pendapatan Denda',
-                'position' => EntryPosition::Credit,
-                'account_type_filter' => 'REVENUE',
-                'account_id' => $this->getAccountId('4-1103'), // Pendapatan Denda
-                'is_required' => true,
+                'label' => 'Pendapatan Denda',
+                'direction' => EntryPosition::Credit,
+                'account_type' => AccountType::Revenue,
+                'chart_of_account_id' => $this->getAccountId('4-1103'), // Pendapatan Denda
             ]
         );
     }

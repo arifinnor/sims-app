@@ -45,7 +45,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('chart-of-accounts/{chart_of_account}/force-delete', [ChartOfAccountController::class, 'forceDelete'])->name('chart-of-accounts.force-delete');
 
         Route::resource('transaction-types', \App\Http\Controllers\Finance\TransactionTypeController::class);
-        Route::post('transaction-types/{transaction_type}/configs/{config}', [\App\Http\Controllers\Finance\TransactionTypeController::class, 'updateConfig'])->name('transaction-types.configs.update');
+        Route::post('transaction-types/{transaction_type}/accounts/{account}', [\App\Http\Controllers\Finance\TransactionTypeController::class, 'updateAccount'])->name('transaction-types.accounts.update');
     });
 });
 

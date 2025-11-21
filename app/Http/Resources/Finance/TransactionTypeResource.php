@@ -26,8 +26,8 @@ class TransactionTypeResource extends JsonResource
             'is_active' => $this->is_active,
             'created_at' => $this->created_at?->toIso8601String(),
             'updated_at' => $this->updated_at?->toIso8601String(),
-            'configs' => $this->relationLoaded('configs')
-                ? TransactionEntryConfigResource::collection($this->configs)->resolve()
+            'accounts' => $this->relationLoaded('accounts')
+                ? TransactionAccountResource::collection($this->accounts)->resolve()
                 : [],
         ];
     }

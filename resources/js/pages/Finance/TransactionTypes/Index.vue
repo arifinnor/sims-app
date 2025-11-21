@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import TransactionTypeController, { updateConfig } from '@/actions/App/Http/Controllers/Finance/TransactionTypeController';
+import TransactionTypeController, { updateAccount } from '@/actions/App/Http/Controllers/Finance/TransactionTypeController';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
@@ -14,16 +14,15 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { AlertCircle } from 'lucide-vue-next';
 import { ref, computed } from 'vue';
 
-interface TransactionEntryConfig {
+interface TransactionAccount {
     id: string;
     transaction_type_id: string;
-    config_key: string;
-    ui_label: string;
-    position: string;
-    account_type_filter: string | null;
-    account_id: string | null;
-    is_required: boolean;
-    account?: {
+    role: string;
+    label: string;
+    direction: string;
+    account_type: string;
+    chart_of_account_id: string | null;
+    chart_of_account?: {
         id: string;
         code: string;
         name: string;
@@ -38,7 +37,7 @@ interface TransactionType {
     name: string;
     category: string;
     is_active: boolean;
-    configs: TransactionEntryConfig[];
+    accounts: TransactionAccount[];
 }
 
 interface ChartOfAccount {
@@ -81,14 +80,14 @@ const categoriesWithAll = computed(() => {
     return ['ALL', ...props.categories];
 });
 
-const updateConfigMapping = (
+const updateAccountMapping = (
     transactionTypeId: string,
-    configId: string,
-    accountId: string | null,
+    accountId: string,
+    chartOfAccountId: string | null,
 ) => {
     router.post(
-        updateConfig.url({ transaction_type: transactionTypeId, config: configId }),
-        { account_id: accountId },
+        updateAccount.url({ transaction_type: transactionTypeId, account: accountId }),
+        { chart_of_account_id: chartOfAccountId },
         {
             preserveState: true,
             preserveScroll: true,
@@ -99,8 +98,11 @@ const updateConfigMapping = (
     );
 };
 
-const hasRequiredMissing = (config: TransactionEntryConfig): boolean => {
-    return config.is_required && !config.account_id;
+const getDirectionBadgeClass = (direction: string): string => {
+    if (direction === 'DEBIT') {
+        return 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-100';
+    }
+    return 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100';
 };
 </script>
 
@@ -162,12 +164,7 @@ const hasRequiredMissing = (config: TransactionEntryConfig): boolean => {
                     <Card
                         v-for="transactionType in filteredTransactionTypes"
                         :key="transactionType.id"
-                        :class="[
-                            'transition-all',
-                            transactionType.configs?.some(hasRequiredMissing)
-                                ? 'border-destructive'
-                                : '',
-                        ]"
+                        class="transition-all"
                     >
                         <CardHeader>
                             <div class="flex items-start justify-between gap-4">
@@ -206,72 +203,44 @@ const hasRequiredMissing = (config: TransactionEntryConfig): boolean => {
                         </CardHeader>
                         <CardContent>
                             <div class="space-y-4">
-                                <Alert
-                                    v-if="transactionType.configs?.some(hasRequiredMissing)"
-                                    variant="destructive"
-                                >
-                                    <AlertCircle class="h-4 w-4" />
-                                    <AlertDescription>
-                                        Some required account mappings are missing. Please
-                                        configure all required accounts.
-                                    </AlertDescription>
-                                </Alert>
-
                                 <div
-                                    v-for="config in transactionType.configs || []"
-                                    :key="config.id"
-                                    :class="[
-                                        'rounded-lg border p-4',
-                                        hasRequiredMissing(config)
-                                            ? 'border-destructive bg-destructive/5'
-                                            : 'border-border',
-                                    ]"
+                                    v-for="account in transactionType.accounts || []"
+                                    :key="account.id"
+                                    class="rounded-lg border border-border p-4"
                                 >
                                     <div class="space-y-3">
                                         <div>
-                                            <label
-                                                :for="`config-${config.id}`"
-                                                class="text-sm font-medium"
-                                            >
-                                                {{ config.ui_label }}
-                                                <span
-                                                    v-if="config.is_required"
-                                                    class="text-destructive"
+                                            <div class="flex items-center gap-2 mb-1">
+                                                <label
+                                                    :for="`account-${account.id}`"
+                                                    class="text-sm font-medium"
                                                 >
-                                                    *
-                                                </span>
-                                            </label>
-                                            <p
-                                                v-if="config.account_type_filter"
-                                                class="text-xs text-muted-foreground mt-1"
-                                            >
-                                                Must be a {{ config.account_type_filter }}
-                                                account
+                                                    {{ account.label }}
+                                                </label>
+                                                <Badge :class="getDirectionBadgeClass(account.direction)">
+                                                    {{ account.direction }}
+                                                </Badge>
+                                            </div>
+                                            <p class="text-xs text-muted-foreground mt-1">
+                                                Type: {{ account.account_type }}
                                             </p>
                                         </div>
 
                                         <div>
                                             <AccountCombobox
-                                                :id="`config-${config.id}`"
-                                                :model-value="config.account_id"
+                                                :id="`account-${account.id}`"
+                                                :model-value="account.chart_of_account_id"
                                                 :accounts="chartOfAccounts"
-                                                :account-type-filter="
-                                                    config.account_type_filter
-                                                "
-                                                :is-required="config.is_required"
+                                                :account-type-filter="account.account_type"
                                                 placeholder="Select account..."
                                                 @update:model-value="
                                                     (value) =>
-                                                        updateConfigMapping(
+                                                        updateAccountMapping(
                                                             transactionType.id,
-                                                            config.id,
+                                                            account.id,
                                                             value,
                                                         )
                                                 "
-                                            />
-                                            <InputError
-                                                v-if="hasRequiredMissing(config)"
-                                                message="This account mapping is required."
                                             />
                                         </div>
                                     </div>

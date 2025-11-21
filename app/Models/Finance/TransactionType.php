@@ -54,11 +54,11 @@ class TransactionType extends Model
     }
 
     /**
-     * @return HasMany<TransactionEntryConfig>
+     * @return HasMany<TransactionAccount>
      */
-    public function configs(): HasMany
+    public function accounts(): HasMany
     {
-        return $this->hasMany(TransactionEntryConfig::class, 'transaction_type_id');
+        return $this->hasMany(TransactionAccount::class, 'transaction_type_id');
     }
 
     /**

@@ -4,12 +4,12 @@ namespace App\Http\Controllers\Finance;
 
 use App\Enums\Finance\TransactionCategory;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Finance\TransactionEntryConfigUpdateRequest;
+use App\Http\Requests\Finance\TransactionAccountUpdateRequest;
 use App\Http\Requests\Finance\TransactionTypeStoreRequest;
 use App\Http\Requests\Finance\TransactionTypeUpdateRequest;
 use App\Http\Resources\Finance\TransactionTypeResource;
 use App\Models\Finance\ChartOfAccount;
-use App\Models\Finance\TransactionEntryConfig;
+use App\Models\Finance\TransactionAccount;
 use App\Models\Finance\TransactionType;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection;
@@ -24,7 +24,7 @@ class TransactionTypeController extends Controller
     public function index(): Response
     {
         $transactionTypes = TransactionType::query()
-            ->with(['configs.account:id,code,name,account_type'])
+            ->with(['accounts.chartOfAccount:id,code,name,account_type'])
             ->where('is_active', true)
             ->orderBy('category')
             ->orderBy('name')
@@ -83,7 +83,7 @@ class TransactionTypeController extends Controller
      */
     public function show(TransactionType $transactionType): Response
     {
-        $transactionType->load(['configs.account:id,code,name,account_type']);
+        $transactionType->load(['accounts.chartOfAccount:id,code,name,account_type']);
 
         return Inertia::render('Finance/TransactionTypes/Show', [
             'transactionType' => TransactionTypeResource::make($transactionType)->resolve(),
@@ -139,18 +139,18 @@ class TransactionTypeController extends Controller
     }
 
     /**
-     * Update a specific entry config's account mapping.
+     * Update a specific account mapping.
      */
-    public function updateConfig(
-        TransactionEntryConfigUpdateRequest $request,
+    public function updateAccount(
+        TransactionAccountUpdateRequest $request,
         TransactionType $transactionType,
-        TransactionEntryConfig $config
+        TransactionAccount $account
     ): RedirectResponse {
-        if ($config->transaction_type_id !== $transactionType->id) {
+        if ($account->transaction_type_id !== $transactionType->id) {
             abort(404);
         }
 
-        $config->update($request->validated());
+        $account->update($request->validated());
 
         return back()->with('success', 'Account mapping updated successfully.');
     }

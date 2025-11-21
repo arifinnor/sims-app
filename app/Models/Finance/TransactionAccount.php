@@ -2,16 +2,24 @@
 
 namespace App\Models\Finance;
 
+use App\Enums\Finance\AccountType;
 use App\Enums\Finance\EntryPosition;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class TransactionEntryConfig extends Model
+class TransactionAccount extends Model
 {
     use HasFactory;
     use HasUuids;
+
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'transaction_accounts';
 
     /**
      * The "type" of the primary key ID.
@@ -32,12 +40,11 @@ class TransactionEntryConfig extends Model
      */
     protected $fillable = [
         'transaction_type_id',
-        'config_key',
-        'ui_label',
-        'position',
-        'account_type_filter',
-        'account_id',
-        'is_required',
+        'role',
+        'label',
+        'direction',
+        'account_type',
+        'chart_of_account_id',
     ];
 
     /**
@@ -46,15 +53,15 @@ class TransactionEntryConfig extends Model
     protected function casts(): array
     {
         return [
-            'position' => EntryPosition::class,
-            'is_required' => 'boolean',
+            'direction' => EntryPosition::class,
+            'account_type' => AccountType::class,
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
         ];
     }
 
     /**
-     * @return BelongsTo<TransactionType, TransactionEntryConfig>
+     * @return BelongsTo<TransactionType, TransactionAccount>
      */
     public function transactionType(): BelongsTo
     {
@@ -62,10 +69,10 @@ class TransactionEntryConfig extends Model
     }
 
     /**
-     * @return BelongsTo<ChartOfAccount, TransactionEntryConfig>
+     * @return BelongsTo<ChartOfAccount, TransactionAccount>
      */
-    public function account(): BelongsTo
+    public function chartOfAccount(): BelongsTo
     {
-        return $this->belongsTo(ChartOfAccount::class, 'account_id');
+        return $this->belongsTo(ChartOfAccount::class, 'chart_of_account_id');
     }
 }

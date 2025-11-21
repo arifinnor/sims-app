@@ -4,7 +4,7 @@ namespace App\Http\Requests\Finance;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class TransactionEntryConfigUpdateRequest extends FormRequest
+class TransactionAccountUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,7 @@ class TransactionEntryConfigUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'account_id' => ['nullable', 'uuid', 'exists:chart_of_accounts,id'],
+            'chart_of_account_id' => ['nullable', 'uuid', 'exists:chart_of_accounts,id'],
         ];
     }
 }
