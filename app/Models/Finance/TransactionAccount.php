@@ -3,7 +3,7 @@
 namespace App\Models\Finance;
 
 use App\Enums\Finance\AccountType;
-use App\Enums\Finance\EntryPosition;
+use App\Enums\Finance\EntryDirection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -53,7 +53,7 @@ class TransactionAccount extends Model
     protected function casts(): array
     {
         return [
-            'direction' => EntryPosition::class,
+            'direction' => EntryDirection::class,
             'account_type' => AccountType::class,
             'created_at' => 'datetime',
             'updated_at' => 'datetime',

@@ -3,7 +3,7 @@
 namespace Database\Seeders\Finance;
 
 use App\Enums\Finance\AccountType;
-use App\Enums\Finance\EntryPosition;
+use App\Enums\Finance\EntryDirection;
 use App\Enums\Finance\TransactionCategory;
 use App\Models\Finance\ChartOfAccount;
 use App\Models\Finance\TransactionAccount;
@@ -48,7 +48,7 @@ class TransactionTypeSeeder extends Seeder
             ['transaction_type_id' => $transactionType->id, 'role' => 'receivable_debit'],
             [
                 'label' => 'Akun Piutang Siswa',
-                'direction' => EntryPosition::Debit,
+                'direction' => EntryDirection::Debit,
                 'account_type' => AccountType::Asset,
                 'chart_of_account_id' => $this->getAccountId('1-1103'), // Piutang Siswa
             ]
@@ -58,7 +58,7 @@ class TransactionTypeSeeder extends Seeder
             ['transaction_type_id' => $transactionType->id, 'role' => 'revenue_credit'],
             [
                 'label' => 'Akun Pendapatan SPP',
-                'direction' => EntryPosition::Credit,
+                'direction' => EntryDirection::Credit,
                 'account_type' => AccountType::Revenue,
                 'chart_of_account_id' => $this->getAccountId('4-1101'), // Pendapatan SPP
             ]
@@ -85,7 +85,7 @@ class TransactionTypeSeeder extends Seeder
             ['transaction_type_id' => $transactionType->id, 'role' => 'cash_debit'],
             [
                 'label' => 'Akun Kas/Bank',
-                'direction' => EntryPosition::Debit,
+                'direction' => EntryDirection::Debit,
                 'account_type' => AccountType::Asset,
                 'chart_of_account_id' => null, // User selects cash/bank account
             ]
@@ -95,7 +95,7 @@ class TransactionTypeSeeder extends Seeder
             ['transaction_type_id' => $transactionType->id, 'role' => 'receivable_credit'],
             [
                 'label' => 'Akun Piutang Siswa',
-                'direction' => EntryPosition::Credit,
+                'direction' => EntryDirection::Credit,
                 'account_type' => AccountType::Asset,
                 'chart_of_account_id' => $this->getAccountId('1-1103'), // Piutang Siswa
             ]
@@ -121,7 +121,7 @@ class TransactionTypeSeeder extends Seeder
             ['transaction_type_id' => $transactionType->id, 'role' => 'receivable_debit'],
             [
                 'label' => 'Akun Piutang Siswa',
-                'direction' => EntryPosition::Debit,
+                'direction' => EntryDirection::Debit,
                 'account_type' => AccountType::Asset,
                 'chart_of_account_id' => $this->getAccountId('1-1103'), // Piutang Siswa
             ]
@@ -131,7 +131,7 @@ class TransactionTypeSeeder extends Seeder
             ['transaction_type_id' => $transactionType->id, 'role' => 'revenue_credit'],
             [
                 'label' => 'Akun Pendapatan Uang Pangkal',
-                'direction' => EntryPosition::Credit,
+                'direction' => EntryDirection::Credit,
                 'account_type' => AccountType::Revenue,
                 'chart_of_account_id' => $this->getAccountId('4-1102'), // Pendapatan Uang Pangkal
             ]
@@ -158,7 +158,7 @@ class TransactionTypeSeeder extends Seeder
             ['transaction_type_id' => $transactionType->id, 'role' => 'cash_debit'],
             [
                 'label' => 'Akun Kas/Bank',
-                'direction' => EntryPosition::Debit,
+                'direction' => EntryDirection::Debit,
                 'account_type' => AccountType::Asset,
                 'chart_of_account_id' => null, // User selects cash/bank account
             ]
@@ -168,7 +168,7 @@ class TransactionTypeSeeder extends Seeder
             ['transaction_type_id' => $transactionType->id, 'role' => 'revenue_credit'],
             [
                 'label' => 'Pendapatan Seragam & Buku',
-                'direction' => EntryPosition::Credit,
+                'direction' => EntryDirection::Credit,
                 'account_type' => AccountType::Revenue,
                 'chart_of_account_id' => $this->getAccountId('4-1104'), // Penjualan Seragam & Buku
             ]
@@ -195,7 +195,7 @@ class TransactionTypeSeeder extends Seeder
             ['transaction_type_id' => $transactionType->id, 'role' => 'cash_debit'],
             [
                 'label' => 'Akun Kas/Bank',
-                'direction' => EntryPosition::Debit,
+                'direction' => EntryDirection::Debit,
                 'account_type' => AccountType::Asset,
                 'chart_of_account_id' => null, // User selects cash/bank account
             ]
@@ -205,7 +205,7 @@ class TransactionTypeSeeder extends Seeder
             ['transaction_type_id' => $transactionType->id, 'role' => 'liability_credit'],
             [
                 'label' => 'Tabungan Siswa',
-                'direction' => EntryPosition::Credit,
+                'direction' => EntryDirection::Credit,
                 'account_type' => AccountType::Liability,
                 'chart_of_account_id' => $this->getAccountId('2-1103'), // Tabungan Siswa
             ]
@@ -231,7 +231,7 @@ class TransactionTypeSeeder extends Seeder
             ['transaction_type_id' => $transactionType->id, 'role' => 'salary_expense_debit'],
             [
                 'label' => 'Beban Gaji Guru',
-                'direction' => EntryPosition::Debit,
+                'direction' => EntryDirection::Debit,
                 'account_type' => AccountType::Expense,
                 'chart_of_account_id' => $this->getAccountId('6-1101'), // Beban Gaji Guru
             ]
@@ -241,7 +241,7 @@ class TransactionTypeSeeder extends Seeder
             ['transaction_type_id' => $transactionType->id, 'role' => 'tax_payable_credit'],
             [
                 'label' => 'Utang PPh 21',
-                'direction' => EntryPosition::Credit,
+                'direction' => EntryDirection::Credit,
                 'account_type' => AccountType::Liability,
                 'chart_of_account_id' => $this->getAccountId('2-1105'), // Utang PPh 21
             ]
@@ -252,7 +252,7 @@ class TransactionTypeSeeder extends Seeder
             ['transaction_type_id' => $transactionType->id, 'role' => 'cash_credit'],
             [
                 'label' => 'Akun Kas/Bank (Gaji Bersih)',
-                'direction' => EntryPosition::Credit,
+                'direction' => EntryDirection::Credit,
                 'account_type' => AccountType::Asset,
                 'chart_of_account_id' => null, // User selects cash/bank account
             ]
@@ -278,7 +278,7 @@ class TransactionTypeSeeder extends Seeder
             ['transaction_type_id' => $transactionType->id, 'role' => 'expense_debit'],
             [
                 'label' => 'Beban Listrik, Air & Internet',
-                'direction' => EntryPosition::Debit,
+                'direction' => EntryDirection::Debit,
                 'account_type' => AccountType::Expense,
                 'chart_of_account_id' => $this->getAccountId('6-1103'), // Beban Listrik, Air & Internet
             ]
@@ -289,7 +289,7 @@ class TransactionTypeSeeder extends Seeder
             ['transaction_type_id' => $transactionType->id, 'role' => 'cash_credit'],
             [
                 'label' => 'Akun Kas/Bank',
-                'direction' => EntryPosition::Credit,
+                'direction' => EntryDirection::Credit,
                 'account_type' => AccountType::Asset,
                 'chart_of_account_id' => null, // User selects cash/bank account
             ]
@@ -315,7 +315,7 @@ class TransactionTypeSeeder extends Seeder
             ['transaction_type_id' => $transactionType->id, 'role' => 'depreciation_expense_debit'],
             [
                 'label' => 'Beban Penyusutan Aset',
-                'direction' => EntryPosition::Debit,
+                'direction' => EntryDirection::Debit,
                 'account_type' => AccountType::Expense,
                 'chart_of_account_id' => $this->getAccountId('6-1107'), // Beban Penyusutan Aset
             ]
@@ -325,7 +325,7 @@ class TransactionTypeSeeder extends Seeder
             ['transaction_type_id' => $transactionType->id, 'role' => 'accumulated_depreciation_credit'],
             [
                 'label' => 'Akumulasi Penyusutan',
-                'direction' => EntryPosition::Credit,
+                'direction' => EntryDirection::Credit,
                 'account_type' => AccountType::Asset,
                 'chart_of_account_id' => $this->getAccountId('1-2103'), // Akumulasi Penyusutan
             ]
@@ -351,7 +351,7 @@ class TransactionTypeSeeder extends Seeder
             ['transaction_type_id' => $transactionType->id, 'role' => 'expense_debit'],
             [
                 'label' => 'Beban Perlengkapan/ATK',
-                'direction' => EntryPosition::Debit,
+                'direction' => EntryDirection::Debit,
                 'account_type' => AccountType::Expense,
                 'chart_of_account_id' => $this->getAccountId('6-1108'), // Beban Perlengkapan/ATK
             ]
@@ -361,7 +361,7 @@ class TransactionTypeSeeder extends Seeder
             ['transaction_type_id' => $transactionType->id, 'role' => 'inventory_credit'],
             [
                 'label' => 'Perlengkapan/Inventory',
-                'direction' => EntryPosition::Credit,
+                'direction' => EntryDirection::Credit,
                 'account_type' => AccountType::Asset,
                 'chart_of_account_id' => $this->getAccountId('1-1104'), // Perlengkapan/Inventory
             ]
@@ -387,7 +387,7 @@ class TransactionTypeSeeder extends Seeder
             ['transaction_type_id' => $transactionType->id, 'role' => 'receivable_debit'],
             [
                 'label' => 'Piutang Denda',
-                'direction' => EntryPosition::Debit,
+                'direction' => EntryDirection::Debit,
                 'account_type' => AccountType::Asset,
                 'chart_of_account_id' => $this->getAccountId('1-1103'), // Piutang Siswa
             ]
@@ -397,7 +397,7 @@ class TransactionTypeSeeder extends Seeder
             ['transaction_type_id' => $transactionType->id, 'role' => 'fine_revenue_credit'],
             [
                 'label' => 'Pendapatan Denda',
-                'direction' => EntryPosition::Credit,
+                'direction' => EntryDirection::Credit,
                 'account_type' => AccountType::Revenue,
                 'chart_of_account_id' => $this->getAccountId('4-1103'), // Pendapatan Denda
             ]

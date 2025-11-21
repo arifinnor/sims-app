@@ -2,7 +2,7 @@
 
 namespace App\Enums\Finance;
 
-enum EntryPosition: string
+enum EntryDirection: string
 {
     case Debit = 'DEBIT';
     case Credit = 'CREDIT';

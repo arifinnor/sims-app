@@ -46,6 +46,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::resource('transaction-types', \App\Http\Controllers\Finance\TransactionTypeController::class);
         Route::post('transaction-types/{transaction_type}/accounts/{account}', [\App\Http\Controllers\Finance\TransactionTypeController::class, 'updateAccount'])->name('transaction-types.accounts.update');
+
+        Route::resource('journal-entries', \App\Http\Controllers\Finance\JournalEntryController::class);
+        Route::post('journal-entries/{journal_entry}/void', [\App\Http\Controllers\Finance\JournalEntryController::class, 'void'])->name('journal-entries.void');
     });
 });
 

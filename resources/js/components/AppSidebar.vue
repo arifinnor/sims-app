@@ -13,12 +13,13 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { GraduationCap, LayoutGrid, User, Users, Wallet, FileText } from 'lucide-vue-next';
+import { GraduationCap, LayoutGrid, User, Users, Wallet, FileText, BookOpen } from 'lucide-vue-next';
 import StudentController from '@/actions/App/Http/Controllers/StudentController';
 import TeacherController from '@/actions/App/Http/Controllers/TeacherController';
 import UserController from '@/actions/App/Http/Controllers/UserController';
 import ChartOfAccountController from '@/actions/App/Http/Controllers/Finance/ChartOfAccountController';
 import TransactionTypeController from '@/actions/App/Http/Controllers/Finance/TransactionTypeController';
+import JournalEntryController from '@/actions/App/Http/Controllers/Finance/JournalEntryController';
 import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
@@ -48,9 +49,14 @@ const mainNavItems: NavItem[] = [
         icon: Wallet,
     },
     {
-        title: 'Journal Configuration',
+        title: 'Journal Mappings',
         href: TransactionTypeController.index().url,
         icon: FileText,
+    },
+    {
+        title: 'Journal Entries',
+        href: JournalEntryController.index().url,
+        icon: BookOpen,
     },
 ];
 

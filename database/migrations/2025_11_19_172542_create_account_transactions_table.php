@@ -1,7 +1,7 @@
 <?php
 
 use App\Enums\Finance\AccountType;
-use App\Enums\Finance\EntryPosition;
+use App\Enums\Finance\EntryDirection;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -18,7 +18,7 @@ return new class extends Migration
             $table->uuid('transaction_type_id')->index();
             $table->string('role');
             $table->string('label');
-            $table->enum('direction', EntryPosition::values());
+            $table->enum('direction', EntryDirection::values());
             $table->enum('account_type', AccountType::values());
             $table->uuid('chart_of_account_id')->nullable()->index();
             $table->timestamps();
