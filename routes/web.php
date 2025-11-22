@@ -49,6 +49,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::resource('journal-entries', \App\Http\Controllers\Finance\JournalEntryController::class);
         Route::post('journal-entries/{journal_entry}/void', [\App\Http\Controllers\Finance\JournalEntryController::class, 'void'])->name('journal-entries.void');
+
+        Route::resource('transactions', \App\Http\Controllers\Finance\TransactionController::class);
+        Route::post('transactions/{journal_entry}/void', [\App\Http\Controllers\Finance\TransactionController::class, 'void'])->name('transactions.void');
     });
 });
 
