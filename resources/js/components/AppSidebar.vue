@@ -67,7 +67,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Reports',
-        href: ReportController.generalLedgerIndex().url,
+        href: ReportController.index().url,
         icon: BarChart,
     },
 ];

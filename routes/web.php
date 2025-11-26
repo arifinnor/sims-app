@@ -55,8 +55,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // Reports
         Route::prefix('reports')->name('reports.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Finance\ReportController::class, 'index'])->name('index');
             Route::get('general-ledger', [\App\Http\Controllers\Finance\ReportController::class, 'generalLedgerIndex'])->name('general-ledger.index');
             Route::get('general-ledger/show', [\App\Http\Controllers\Finance\ReportController::class, 'generalLedger'])->name('general-ledger.show');
+            Route::get('trial-balance', [\App\Http\Controllers\Finance\ReportController::class, 'trialBalanceIndex'])->name('trial-balance.index');
+            Route::get('trial-balance/show', [\App\Http\Controllers\Finance\ReportController::class, 'trialBalance'])->name('trial-balance.show');
         });
     });
 });
