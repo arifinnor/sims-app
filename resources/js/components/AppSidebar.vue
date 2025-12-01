@@ -51,7 +51,7 @@ const mainNavItems: NavItem[] = [
         icon: Wallet,
     },
     {
-        title: 'Journal Mappings',
+        title: 'Transaction Configuration',
         href: TransactionTypeController.index().url,
         icon: FileText,
     },
