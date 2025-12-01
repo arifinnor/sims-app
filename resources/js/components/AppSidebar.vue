@@ -51,7 +51,7 @@ const mainNavItems: NavItem[] = [
         icon: Wallet,
     },
     {
-        title: 'Transaction Configuration',
+        title: 'Transaction Configurations',
         href: TransactionTypeController.index().url,
         icon: FileText,
     },
