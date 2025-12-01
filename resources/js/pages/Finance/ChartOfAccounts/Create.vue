@@ -44,6 +44,10 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 const accountType = ref<string>('');
 const normalBalance = ref<string>('');
+const parentId = ref<string | undefined>(undefined);
+const code = ref<string>('');
+const codeManuallyEdited = ref<boolean>(false);
+const loadingCode = ref<boolean>(false);
 
 watch(accountType, (newType) => {
     // Auto-set normal balance based on account type
@@ -53,6 +57,53 @@ watch(accountType, (newType) => {
         normalBalance.value = 'CREDIT';
     }
 });
+
+watch(parentId, async (newParentId) => {
+    // Only auto-suggest code if it hasn't been manually edited
+    if (codeManuallyEdited.value) {
+        return;
+    }
+
+    // If parent is cleared, clear code too
+    if (!newParentId || newParentId === '') {
+        code.value = '';
+        return;
+    }
+
+    // Set loading state
+    loadingCode.value = true;
+
+    try {
+        const url = new URL('/finance/chart-of-accounts/next-code', window.location.origin);
+        url.searchParams.set('parent_id', newParentId);
+
+        const response = await fetch(url.toString(), {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+            credentials: 'include',
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch next code');
+        }
+
+        const data = await response.json();
+        code.value = data.code;
+    } catch (error) {
+        console.error('Error fetching next code:', error);
+        // Keep existing code on error
+    } finally {
+        loadingCode.value = false;
+    }
+}, { immediate: false });
+
+// Track manual edits to code field
+const onCodeInput = (): void => {
+    codeManuallyEdited.value = true;
+};
 </script>
 
 <template>
@@ -89,45 +140,6 @@ watch(accountType, (newType) => {
             >
                 <CardContent class="grid gap-6">
                     <div class="grid gap-2">
-                        <Label for="code">Account Code <span class="text-destructive">*</span></Label>
-                        <Input
-                            id="code"
-                            type="text"
-                            name="code"
-                            required
-                            placeholder="e.g., 1-1001"
-                            autofocus
-                        />
-                        <InputError :message="errors.code" />
-                        <p class="text-xs text-muted-foreground">
-                            Unique identifier for this account (e.g., 1-1001, 2-2000)
-                        </p>
-                    </div>
-
-                    <div class="grid gap-2">
-                        <Label for="name">Account Name <span class="text-destructive">*</span></Label>
-                        <Input
-                            id="name"
-                            type="text"
-                            name="name"
-                            required
-                            placeholder="Account name"
-                        />
-                        <InputError :message="errors.name" />
-                    </div>
-
-                    <div class="grid gap-2">
-                        <Label for="description">Description</Label>
-                        <Textarea
-                            id="description"
-                            name="description"
-                            placeholder="Optional description"
-                            :rows="3"
-                        />
-                        <InputError :message="errors.description" />
-                    </div>
-
-                    <div class="grid gap-2">
                         <Label for="category_id">Category</Label>
                         <Select name="category_id">
                             <SelectTrigger id="category_id">
@@ -148,7 +160,7 @@ watch(accountType, (newType) => {
 
                     <div class="grid gap-2">
                         <Label for="parent_id">Parent Account</Label>
-                        <Select name="parent_id">
+                        <Select v-model="parentId" name="parent_id">
                             <SelectTrigger id="parent_id">
                                 <SelectValue placeholder="Select a parent account (optional)" />
                             </SelectTrigger>
@@ -164,7 +176,7 @@ watch(accountType, (newType) => {
                         </Select>
                         <InputError :message="errors.parent_id" />
                         <p class="text-xs text-muted-foreground">
-                            Select a parent account to create a hierarchical structure
+                            Select a parent account to create a hierarchical structure. Code will be auto-suggested. Leave empty for root account.
                         </p>
                     </div>
 
@@ -188,6 +200,42 @@ watch(accountType, (newType) => {
                     </div>
 
                     <div class="grid gap-2">
+                        <Label for="code">Account Code <span class="text-destructive">*</span></Label>
+                        <div class="relative">
+                            <Input
+                                id="code"
+                                v-model="code"
+                                type="text"
+                                name="code"
+                                required
+                                placeholder="e.g., 1-1001"
+                                autofocus
+                                @input="onCodeInput"
+                            />
+                            <Spinner
+                                v-if="loadingCode"
+                                class="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2"
+                            />
+                        </div>
+                        <InputError :message="errors.code" />
+                        <p class="text-xs text-muted-foreground">
+                            Unique identifier for this account (e.g., 1-1001, 2-2000). Code will be auto-suggested when a parent is selected.
+                        </p>
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label for="name">Account Name <span class="text-destructive">*</span></Label>
+                        <Input
+                            id="name"
+                            type="text"
+                            name="name"
+                            required
+                            placeholder="Account name"
+                        />
+                        <InputError :message="errors.name" />
+                    </div>
+
+                    <div class="grid gap-2">
                         <Label for="normal_balance">Normal Balance <span class="text-destructive">*</span></Label>
                         <Select v-model="normalBalance" name="normal_balance" required>
                             <SelectTrigger id="normal_balance">
@@ -207,6 +255,17 @@ watch(accountType, (newType) => {
                         <p class="text-xs text-muted-foreground">
                             Assets and Expenses: DEBIT | Liabilities, Equity, and Revenue: CREDIT
                         </p>
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label for="description">Description</Label>
+                        <Textarea
+                            id="description"
+                            name="description"
+                            placeholder="Optional description"
+                            :rows="3"
+                        />
+                        <InputError :message="errors.description" />
                     </div>
 
                     <div class="grid gap-4">

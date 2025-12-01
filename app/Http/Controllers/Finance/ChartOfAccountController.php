@@ -11,7 +11,11 @@ use App\Http\Requests\Finance\ChartOfAccountUpdateRequest;
 use App\Http\Resources\ChartOfAccountResource;
 use App\Models\Finance\AccountCategory;
 use App\Models\Finance\ChartOfAccount;
+use App\Services\Finance\ChartOfAccountService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -79,6 +83,26 @@ class ChartOfAccountController extends Controller
     public function create(): Response
     {
         return Inertia::render('Finance/ChartOfAccounts/Create', $this->formOptions());
+    }
+
+    /**
+     * Get the next suggested code for a chart of account.
+     */
+    public function getNextCode(Request $request, ChartOfAccountService $service): JsonResponse
+    {
+        $validated = $request->validate([
+            'parent_id' => ['sometimes', 'nullable', 'uuid', 'exists:chart_of_accounts,id'],
+        ]);
+
+        try {
+            $code = $service->suggestNextCode($validated['parent_id'] ?? null);
+
+            return response()->json(['code' => $code]);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Parent account not found.'], 404);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Unable to suggest next code.'], 500);
+        }
     }
 
     /**
