@@ -47,9 +47,9 @@ class ChartOfAccountUpdateRequest extends FormRequest
             ],
             'account_type' => ['required', 'string', Rule::in(AccountType::values())],
             'normal_balance' => ['required', 'string', Rule::in(NormalBalance::values())],
-            'is_posting' => ['required', 'boolean'],
-            'is_cash' => ['required', 'boolean'],
-            'is_active' => ['required', 'boolean'],
+            'is_posting' => ['sometimes', 'boolean'],
+            'is_cash' => ['sometimes', 'boolean'],
+            'is_active' => ['sometimes', 'boolean'],
         ];
     }
 
@@ -81,9 +81,19 @@ class ChartOfAccountUpdateRequest extends FormRequest
     private function normalizeBoolean(string $key): bool
     {
         if (! $this->has($key)) {
+            // Unchecked checkboxes don't send a value, so missing = false
             return false;
         }
 
-        return filter_var($this->input($key), FILTER_VALIDATE_BOOLEAN);
+        $value = $this->input($key);
+
+        if ($value === '' || $value === null) {
+            return false;
+        }
+
+        $result = filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+
+        // If filter_var returns null (invalid value), default to false
+        return $result ?? false;
     }
 }
