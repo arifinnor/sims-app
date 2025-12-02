@@ -96,13 +96,9 @@ class ChartOfAccountService
             return $prefix.'-'.$base.'100';
         }
 
-        // Level 3+: X-YZ01 -> X-YZ02
-        // Parse last numeric segment
-        $numericPart = (int) $suffix;
-        $nextNumeric = $numericPart + 1;
-        $paddedNext = str_pad((string) $nextNumeric, strlen($suffix), '0', STR_PAD_LEFT);
-
-        return $prefix.'-'.$paddedNext;
+        // Level 3+: Append hierarchical segment (e.g., 1-2101 -> 1-210101)
+        // For hierarchical accounts, append "01" to create child code
+        return $parentCode.'01';
     }
 
     /**
@@ -126,7 +122,26 @@ class ChartOfAccountService
 
         [$prefix, $suffix] = $parts;
 
-        // Parse last numeric segment
+        // Check if this is a hierarchical code (ends with 2+ digits that can be incremented)
+        // For codes like "1-210101", "1-210102", etc., increment the last segment
+        // Extract the last 2 digits as the segment number
+        $suffixLength = strlen($suffix);
+
+        if ($suffixLength >= 2) {
+            // Try to extract the last segment (last 2 digits)
+            $lastSegment = substr($suffix, -2);
+            $baseCode = substr($suffix, 0, -2);
+
+            if (is_numeric($lastSegment) && is_numeric($baseCode)) {
+                $segmentNum = (int) $lastSegment;
+                $nextSegment = $segmentNum + 1;
+                $paddedNext = str_pad((string) $nextSegment, 2, '0', STR_PAD_LEFT);
+
+                return $prefix.'-'.$baseCode.$paddedNext;
+            }
+        }
+
+        // Fallback: Parse last numeric segment and increment
         $numericPart = (int) $suffix;
         $nextNumeric = $numericPart + 1;
         $paddedNext = str_pad((string) $nextNumeric, strlen($suffix), '0', STR_PAD_LEFT);
@@ -153,5 +168,3 @@ class ChartOfAccountService
         return $count;
     }
 }
-
-

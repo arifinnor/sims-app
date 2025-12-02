@@ -140,10 +140,29 @@ const onCodeInput = (): void => {
             >
                 <CardContent class="grid gap-6">
                     <div class="grid gap-2">
-                        <Label for="category_id">Category</Label>
-                        <Select name="category_id">
+                        <Label for="account_type">Account Type <span class="text-destructive">*</span></Label>
+                        <Select v-model="accountType" name="account_type" required>
+                            <SelectTrigger id="account_type">
+                                <SelectValue placeholder="Select account type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem
+                                    v-for="type in props.accountTypes"
+                                    :key="type"
+                                    :value="type"
+                                >
+                                    {{ type }}
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <InputError :message="errors.account_type" />
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label for="category_id">Category <span class="text-destructive">*</span></Label>
+                        <Select name="category_id" required>
                             <SelectTrigger id="category_id">
-                                <SelectValue placeholder="Select a category (optional)" />
+                                <SelectValue placeholder="Select a category" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem
@@ -178,25 +197,6 @@ const onCodeInput = (): void => {
                         <p class="text-xs text-muted-foreground">
                             Select a parent account to create a hierarchical structure. Code will be auto-suggested. Leave empty for root account.
                         </p>
-                    </div>
-
-                    <div class="grid gap-2">
-                        <Label for="account_type">Account Type <span class="text-destructive">*</span></Label>
-                        <Select v-model="accountType" name="account_type" required>
-                            <SelectTrigger id="account_type">
-                                <SelectValue placeholder="Select account type" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem
-                                    v-for="type in props.accountTypes"
-                                    :key="type"
-                                    :value="type"
-                                >
-                                    {{ type }}
-                                </SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <InputError :message="errors.account_type" />
                     </div>
 
                     <div class="grid gap-2">

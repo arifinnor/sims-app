@@ -25,7 +25,7 @@ class ChartOfAccountStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'category_id' => ['sometimes', 'nullable', 'uuid', 'exists:account_categories,id'],
+            'category_id' => ['required', 'uuid', 'exists:account_categories,id'],
             'code' => ['required', 'string', 'max:50', Rule::unique('chart_of_accounts', 'code')],
             'name' => ['required', 'string', 'max:255'],
             'description' => ['sometimes', 'nullable', 'string'],
@@ -63,12 +63,12 @@ class ChartOfAccountStoreRequest extends FormRequest
         return (string) $value;
     }
 
-    private function normalizeBoolean(string $key): ?bool
+    private function normalizeBoolean(string $key): bool
     {
         if (! $this->has($key)) {
-            return null;
+            return false;
         }
 
-        return filter_var($this->input($key), FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+        return filter_var($this->input($key), FILTER_VALIDATE_BOOLEAN);
     }
 }

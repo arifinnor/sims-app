@@ -63,6 +63,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 const accountType = ref<string>(props.account.account_type);
 const normalBalance = ref<string>(props.account.normal_balance);
+const parentId = ref<string | undefined>(props.account.parent_id ? String(props.account.parent_id) : undefined);
 
 watch(accountType, (newType) => {
     // Auto-set normal balance based on account type
@@ -116,81 +117,6 @@ watch(accountType, (newType) => {
             >
                 <CardContent class="grid gap-6">
                     <div class="grid gap-2">
-                        <Label for="code">Account Code <span class="text-destructive">*</span></Label>
-                        <Input
-                            id="code"
-                            type="text"
-                            name="code"
-                            required
-                            :default-value="props.account.code"
-                        />
-                        <InputError :message="errors.code" />
-                    </div>
-
-                    <div class="grid gap-2">
-                        <Label for="name">Account Name <span class="text-destructive">*</span></Label>
-                        <Input
-                            id="name"
-                            type="text"
-                            name="name"
-                            required
-                            :default-value="props.account.name"
-                        />
-                        <InputError :message="errors.name" />
-                    </div>
-
-                    <div class="grid gap-2">
-                        <Label for="description">Description</Label>
-                        <Textarea
-                            id="description"
-                            name="description"
-                            rows="3"
-                            :default-value="props.account.description || ''"
-                        />
-                        <InputError :message="errors.description" />
-                    </div>
-
-                    <div class="grid gap-2">
-                        <Label for="category_id">Category</Label>
-                        <Select name="category_id" :default-value="props.account.category_id ? String(props.account.category_id) : ''">
-                            <SelectTrigger id="category_id">
-                                <SelectValue placeholder="Select a category (optional)" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="">None</SelectItem>
-                                <SelectItem
-                                    v-for="category in props.categories"
-                                    :key="category.id"
-                                    :value="String(category.id)"
-                                >
-                                    {{ category.name }}
-                                </SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <InputError :message="errors.category_id" />
-                    </div>
-
-                    <div class="grid gap-2">
-                        <Label for="parent_id">Parent Account</Label>
-                        <Select name="parent_id" :default-value="props.account.parent_id ? String(props.account.parent_id) : ''">
-                            <SelectTrigger id="parent_id">
-                                <SelectValue placeholder="Select a parent account (optional)" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="">None (Root Level)</SelectItem>
-                                <SelectItem
-                                    v-for="parent in props.parentOptions"
-                                    :key="parent.id"
-                                    :value="String(parent.id)"
-                                >
-                                    {{ parent.code }} - {{ parent.name }}
-                                </SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <InputError :message="errors.parent_id" />
-                    </div>
-
-                    <div class="grid gap-2">
                         <Label for="account_type">Account Type <span class="text-destructive">*</span></Label>
                         <Select v-model="accountType" name="account_type" required>
                             <SelectTrigger id="account_type">
@@ -210,6 +136,76 @@ watch(accountType, (newType) => {
                     </div>
 
                     <div class="grid gap-2">
+                        <Label for="category_id">Category <span class="text-destructive">*</span></Label>
+                        <Select name="category_id" required :default-value="props.account.category_id ? String(props.account.category_id) : ''">
+                            <SelectTrigger id="category_id">
+                                <SelectValue placeholder="Select a category" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem
+                                    v-for="category in props.categories"
+                                    :key="category.id"
+                                    :value="String(category.id)"
+                                >
+                                    {{ category.name }}
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <InputError :message="errors.category_id" />
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label for="parent_id">Parent Account</Label>
+                        <Select v-model="parentId" name="parent_id">
+                            <SelectTrigger id="parent_id">
+                                <SelectValue placeholder="Select a parent account (optional)" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem
+                                    v-for="parent in props.parentOptions"
+                                    :key="parent.id"
+                                    :value="String(parent.id)"
+                                >
+                                    {{ parent.code }} - {{ parent.name }}
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <InputError :message="errors.parent_id" />
+                        <p class="text-xs text-muted-foreground">
+                            Select a parent account to create a hierarchical structure. Leave empty for root account.
+                        </p>
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label for="code">Account Code <span class="text-destructive">*</span></Label>
+                        <Input
+                            id="code"
+                            type="text"
+                            name="code"
+                            required
+                            :default-value="props.account.code"
+                            placeholder="e.g., 1-1001"
+                        />
+                        <InputError :message="errors.code" />
+                        <p class="text-xs text-muted-foreground">
+                            Unique identifier for this account (e.g., 1-1001, 2-2000).
+                        </p>
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label for="name">Account Name <span class="text-destructive">*</span></Label>
+                        <Input
+                            id="name"
+                            type="text"
+                            name="name"
+                            required
+                            :default-value="props.account.name"
+                            placeholder="Account name"
+                        />
+                        <InputError :message="errors.name" />
+                    </div>
+
+                    <div class="grid gap-2">
                         <Label for="normal_balance">Normal Balance <span class="text-destructive">*</span></Label>
                         <Select v-model="normalBalance" name="normal_balance" required>
                             <SelectTrigger id="normal_balance">
@@ -226,6 +222,21 @@ watch(accountType, (newType) => {
                             </SelectContent>
                         </Select>
                         <InputError :message="errors.normal_balance" />
+                        <p class="text-xs text-muted-foreground">
+                            Assets and Expenses: DEBIT | Liabilities, Equity, and Revenue: CREDIT
+                        </p>
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label for="description">Description</Label>
+                        <Textarea
+                            id="description"
+                            name="description"
+                            :rows="3"
+                            :default-value="props.account.description || ''"
+                            placeholder="Optional description"
+                        />
+                        <InputError :message="errors.description" />
                     </div>
 
                     <div class="grid gap-4">
@@ -244,6 +255,9 @@ watch(accountType, (newType) => {
                             </Label>
                         </div>
                         <InputError :message="errors.is_posting" />
+                        <p class="text-xs text-muted-foreground -mt-2">
+                            Uncheck to create a header/folder account (non-posting)
+                        </p>
                     </div>
 
                     <div class="grid gap-4">
@@ -262,6 +276,9 @@ watch(accountType, (newType) => {
                             </Label>
                         </div>
                         <InputError :message="errors.is_cash" />
+                        <p class="text-xs text-muted-foreground -mt-2">
+                            Check if this account should appear in payment/receipt dropdowns
+                        </p>
                     </div>
 
                     <div class="grid gap-4">
@@ -280,6 +297,9 @@ watch(accountType, (newType) => {
                             </Label>
                         </div>
                         <InputError :message="errors.is_active" />
+                        <p class="text-xs text-muted-foreground -mt-2">
+                            Uncheck to deactivate this account
+                        </p>
                     </div>
                 </CardContent>
 
