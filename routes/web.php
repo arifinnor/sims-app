@@ -65,6 +65,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('income-statement/show', [\App\Http\Controllers\Finance\ReportController::class, 'incomeStatement'])->name('income-statement.show');
             Route::get('balance-sheet', [\App\Http\Controllers\Finance\ReportController::class, 'balanceSheetIndex'])->name('balance-sheet.index');
             Route::get('balance-sheet/show', [\App\Http\Controllers\Finance\ReportController::class, 'balanceSheet'])->name('balance-sheet.show');
+            Route::get('cash-flow', [\App\Http\Controllers\Finance\ReportController::class, 'cashFlowIndex'])->name('cash-flow.index');
+            Route::get('cash-flow/show', [\App\Http\Controllers\Finance\ReportController::class, 'cashFlow'])->name('cash-flow.show');
         });
     });
 });

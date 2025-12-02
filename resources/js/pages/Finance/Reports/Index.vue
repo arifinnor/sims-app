@@ -11,7 +11,7 @@ import {
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/vue3';
-import { BookOpen, Landmark, Scale, TrendingUp } from 'lucide-vue-next';
+import { Banknote, BookOpen, Landmark, Scale, TrendingUp } from 'lucide-vue-next';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -48,6 +48,12 @@ const reports = [
         description: 'Statement of Financial Position',
         icon: Landmark,
         href: ReportController.balanceSheetIndex().url,
+    },
+    {
+        title: 'Cash Flow Statement',
+        description: 'Laporan Arus Kas (Direct Method)',
+        icon: Banknote,
+        href: ReportController.cashFlowIndex().url,
     },
 ];
 </script>

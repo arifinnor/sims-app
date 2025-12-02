@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Finance;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Finance\BalanceSheetRequest;
+use App\Http\Requests\Finance\CashFlowRequest;
 use App\Http\Requests\Finance\GeneralLedgerRequest;
 use App\Http\Requests\Finance\IncomeStatementRequest;
 use App\Http\Requests\Finance\TrialBalanceRequest;
 use App\Models\Finance\ChartOfAccount;
 use App\Services\Reporting\BalanceSheetService;
+use App\Services\Reporting\CashFlowService;
 use App\Services\Reporting\GeneralLedgerService;
 use App\Services\Reporting\IncomeStatementService;
 use App\Services\Reporting\TrialBalanceService;
@@ -324,6 +326,86 @@ class ReportController extends Controller
             'is_balanced' => $report['is_balanced'],
             'filters' => [
                 'as_of_date' => $validated['as_of_date'],
+            ],
+        ]);
+    }
+
+    /**
+     * Display the Cash Flow report index (filter form).
+     */
+    public function cashFlowIndex(): Response
+    {
+        $dateRange = $this->getCurrentMonthRange();
+
+        return Inertia::render('Finance/Reports/CashFlow', [
+            'operating_activities' => [],
+            'operating_total' => '0.00',
+            'investing_activities' => [],
+            'investing_total' => '0.00',
+            'financing_activities' => [],
+            'financing_total' => '0.00',
+            'net_change_in_cash' => '0.00',
+            'beginning_cash_balance' => '0.00',
+            'ending_cash_balance' => '0.00',
+            'filters' => [
+                'start_date' => $dateRange['start'],
+                'end_date' => $dateRange['end'],
+            ],
+        ]);
+    }
+
+    /**
+     * Display the Cash Flow report.
+     */
+    public function cashFlow(CashFlowRequest $request, CashFlowService $service): Response
+    {
+        $validated = $request->validated();
+
+        $report = $service->getReport(
+            $validated['start_date'],
+            $validated['end_date']
+        );
+
+        return Inertia::render('Finance/Reports/CashFlow', [
+            'operating_activities' => $report['operating_activities']->map(function ($activity) {
+                return [
+                    'transaction_type_id' => $activity->transaction_type_id,
+                    'transaction_type_name' => $activity->transaction_type_name,
+                    'transaction_type_code' => $activity->transaction_type_code,
+                    'category' => $activity->category,
+                    'amount' => $activity->formatted_amount,
+                    'transaction_count' => $activity->transaction_count,
+                ];
+            })->values(),
+            'operating_total' => $report['operating_total'],
+            'investing_activities' => $report['investing_activities']->map(function ($activity) {
+                return [
+                    'transaction_type_id' => $activity->transaction_type_id,
+                    'transaction_type_name' => $activity->transaction_type_name,
+                    'transaction_type_code' => $activity->transaction_type_code,
+                    'category' => $activity->category,
+                    'amount' => $activity->formatted_amount,
+                    'transaction_count' => $activity->transaction_count,
+                ];
+            })->values(),
+            'investing_total' => $report['investing_total'],
+            'financing_activities' => $report['financing_activities']->map(function ($activity) {
+                return [
+                    'transaction_type_id' => $activity->transaction_type_id,
+                    'transaction_type_name' => $activity->transaction_type_name,
+                    'transaction_type_code' => $activity->transaction_type_code,
+                    'category' => $activity->category,
+                    'amount' => $activity->formatted_amount,
+                    'transaction_count' => $activity->transaction_count,
+                ];
+            })->values(),
+            'financing_total' => $report['financing_total'],
+            'net_change_in_cash' => $report['net_change_in_cash'],
+            'beginning_cash_balance' => $report['beginning_cash_balance'],
+            'ending_cash_balance' => $report['ending_cash_balance'],
+            'filters' => [
+                'start_date' => $validated['start_date'],
+                'end_date' => $validated['end_date'],
             ],
         ]);
     }
