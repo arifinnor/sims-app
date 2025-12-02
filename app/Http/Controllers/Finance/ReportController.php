@@ -14,6 +14,7 @@ use App\Services\Reporting\CashFlowService;
 use App\Services\Reporting\GeneralLedgerService;
 use App\Services\Reporting\IncomeStatementService;
 use App\Services\Reporting\TrialBalanceService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -22,10 +23,11 @@ class ReportController extends Controller
 {
     /**
      * Display the reports index page.
+     * Redirects to the Finance hub since the reports index was consolidated.
      */
-    public function index(): Response
+    public function index(): RedirectResponse
     {
-        return Inertia::render('Finance/Reports/Index');
+        return redirect()->route('finance.index');
     }
 
     /**
