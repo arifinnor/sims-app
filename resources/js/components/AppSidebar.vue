@@ -13,15 +13,11 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { GraduationCap, LayoutGrid, User, Users, Wallet, FileText, BookOpen, CreditCard, BarChart } from 'lucide-vue-next';
+import { GraduationCap, LayoutGrid, User, Users, Wallet } from 'lucide-vue-next';
 import StudentController from '@/actions/App/Http/Controllers/StudentController';
 import TeacherController from '@/actions/App/Http/Controllers/TeacherController';
 import UserController from '@/actions/App/Http/Controllers/UserController';
-import ChartOfAccountController from '@/actions/App/Http/Controllers/Finance/ChartOfAccountController';
-import TransactionTypeController from '@/actions/App/Http/Controllers/Finance/TransactionTypeController';
-import JournalEntryController from '@/actions/App/Http/Controllers/Finance/JournalEntryController';
-import TransactionController from '@/actions/App/Http/Controllers/Finance/TransactionController';
-import ReportController from '@/actions/App/Http/Controllers/Finance/ReportController';
+import FinanceController from '@/actions/App/Http/Controllers/Finance/FinanceController';
 import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
@@ -46,29 +42,9 @@ const mainNavItems: NavItem[] = [
         icon: Users,
     },
     {
-        title: 'Chart of Accounts',
-        href: ChartOfAccountController.index().url,
+        title: 'Finance',
+        href: FinanceController.index().url,
         icon: Wallet,
-    },
-    {
-        title: 'Transaction Configurations',
-        href: TransactionTypeController.index().url,
-        icon: FileText,
-    },
-    {
-        title: 'Journal Entries',
-        href: JournalEntryController.index().url,
-        icon: BookOpen,
-    },
-    {
-        title: 'Transactions',
-        href: TransactionController.index().url,
-        icon: CreditCard,
-    },
-    {
-        title: 'Reports',
-        href: ReportController.index().url,
-        icon: BarChart,
     },
 ];
 
