@@ -39,6 +39,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('guardians/{guardian}/restore', [\App\Http\Controllers\GuardianController::class, 'restore'])->name('guardians.restore');
     Route::delete('guardians/{guardian}/force-delete', [\App\Http\Controllers\GuardianController::class, 'forceDelete'])->name('guardians.force-delete');
 
+    Route::resource('academic-years', \App\Http\Controllers\Academic\AcademicYearController::class);
+    Route::post('academic-years/{academic_year}/restore', [\App\Http\Controllers\Academic\AcademicYearController::class, 'restore'])->name('academic-years.restore');
+    Route::delete('academic-years/{academic_year}/force-delete', [\App\Http\Controllers\Academic\AcademicYearController::class, 'forceDelete'])->name('academic-years.force-delete');
+    Route::post('academic-years/{academic_year}/toggle-active', [\App\Http\Controllers\Academic\AcademicYearController::class, 'toggleActive'])->name('academic-years.toggle-active');
+
+    Route::resource('classrooms', \App\Http\Controllers\Academic\ClassroomController::class);
+    Route::post('classrooms/{classroom}/restore', [\App\Http\Controllers\Academic\ClassroomController::class, 'restore'])->name('classrooms.restore');
+    Route::delete('classrooms/{classroom}/force-delete', [\App\Http\Controllers\Academic\ClassroomController::class, 'forceDelete'])->name('classrooms.force-delete');
+    Route::get('classrooms/{classroom}/enrollment', [\App\Http\Controllers\Academic\ClassroomController::class, 'enrollment'])->name('classrooms.enrollment');
+    Route::post('classrooms/{classroom}/enroll-students', [\App\Http\Controllers\Academic\ClassroomController::class, 'enrollStudents'])->name('classrooms.enroll-students');
+    Route::delete('classrooms/{classroom}/students/{student}', [\App\Http\Controllers\Academic\ClassroomController::class, 'removeStudent'])->name('classrooms.remove-student');
+
     Route::prefix('finance')->name('finance.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Finance\FinanceController::class, 'index'])->name('index');
         Route::get('chart-of-accounts/next-code', [ChartOfAccountController::class, 'getNextCode'])->name('chart-of-accounts.next-code');

@@ -183,5 +183,3 @@ class IncomeStatementService
         return number_format($amount, 2, '.', '');
     }
 }
-
-

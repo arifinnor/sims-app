@@ -78,6 +78,19 @@ class Student extends Model
     }
 
     /**
+     * Get the classrooms this student is enrolled in.
+     *
+     * @return BelongsToMany<Classroom>
+     */
+    public function classrooms(): BelongsToMany
+    {
+        return $this->belongsToMany(Classroom::class, 'class_students')
+            ->withPivot(['status'])
+            ->withTimestamps()
+            ->using(ClassStudent::class);
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
