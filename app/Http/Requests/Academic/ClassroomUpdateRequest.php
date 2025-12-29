@@ -1,0 +1,32 @@
+<?php
+
+namespace App\Http\Requests\Academic;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class ClassroomUpdateRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
+    {
+        return [
+            'academic_year_id' => ['sometimes', 'required', 'string', 'exists:academic_years,id'],
+            'homeroom_teacher_id' => ['sometimes', 'nullable', 'string', 'exists:teachers,id'],
+            'grade_level' => ['sometimes', 'required', 'integer', 'min:1', 'max:12'],
+            'name' => ['sometimes', 'required', 'string', 'max:255'],
+            'capacity' => ['sometimes', 'integer', 'min:1', 'max:100'],
+        ];
+    }
+}

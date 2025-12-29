@@ -4,7 +4,7 @@ import JournalEntryController from '@/actions/App/Http/Controllers/Finance/Journ
 import Heading from '@/components/Heading.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link, router } from '@inertiajs/vue3';
+import { Head, router } from '@inertiajs/vue3';
 
 import { Button } from '@/components/ui/button';
 import {

@@ -2,17 +2,14 @@
 import FinanceController from '@/actions/App/Http/Controllers/Finance/FinanceController';
 import TransactionTypeController, { updateAccount } from '@/actions/App/Http/Controllers/Finance/TransactionTypeController';
 import Heading from '@/components/Heading.vue';
-import InputError from '@/components/InputError.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Form, Head, Link, router } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 
 import AccountCombobox from '@/components/Finance/AccountCombobox.vue';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { AlertCircle } from 'lucide-vue-next';
 import { ref, computed } from 'vue';
 
 interface TransactionAccount {

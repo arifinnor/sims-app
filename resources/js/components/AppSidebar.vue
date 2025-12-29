@@ -13,7 +13,9 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { GraduationCap, LayoutGrid, User, Users, Wallet } from 'lucide-vue-next';
+import { Calendar, GraduationCap, LayoutGrid, School, User, Users, Wallet } from 'lucide-vue-next';
+import AcademicYearController from '@/actions/App/Http/Controllers/Academic/AcademicYearController';
+import ClassroomController from '@/actions/App/Http/Controllers/Academic/ClassroomController';
 import StudentController from '@/actions/App/Http/Controllers/StudentController';
 import TeacherController from '@/actions/App/Http/Controllers/TeacherController';
 import UserController from '@/actions/App/Http/Controllers/UserController';
@@ -40,6 +42,16 @@ const mainNavItems: NavItem[] = [
         title: 'Students',
         href: StudentController.index().url,
         icon: Users,
+    },
+    {
+        title: 'Academic Years',
+        href: AcademicYearController.index().url,
+        icon: Calendar,
+    },
+    {
+        title: 'Classrooms',
+        href: ClassroomController.index().url,
+        icon: School,
     },
     {
         title: 'Finance',

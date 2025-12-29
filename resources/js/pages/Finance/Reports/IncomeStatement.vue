@@ -153,10 +153,6 @@ const isNegative = (value: string): boolean => {
     return parseFloat(value) < 0;
 };
 
-const isPositive = (value: string): boolean => {
-    return parseFloat(value) > 0;
-};
-
 const handleFilter = () => {
     if (!dateFrom.value || !dateTo.value) {
         return;
