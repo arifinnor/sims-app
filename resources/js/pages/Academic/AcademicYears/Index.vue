@@ -51,7 +51,7 @@ interface Props {
     perPageOptions: number[];
 }
 
-const props = defineProps<Props>();
+defineProps<Props>();
 
 const searchQuery = ref<string>('');
 const withTrashedFilter = ref<string>('none');

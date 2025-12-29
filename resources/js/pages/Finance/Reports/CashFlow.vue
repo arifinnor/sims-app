@@ -185,7 +185,6 @@ const hasData = computed(() =>
 );
 
 const netChangeValue = computed(() => parseFloat(props.net_change_in_cash));
-const endingCashValue = computed(() => parseFloat(props.ending_cash_balance));
 
 const breadcrumbs: BreadcrumbItem[] = [
     {

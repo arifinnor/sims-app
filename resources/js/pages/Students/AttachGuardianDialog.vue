@@ -2,11 +2,9 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { InputError } from '@/components/InputError.vue';
 import { Checkbox } from '@/components/ui/checkbox';
 import { router, Form } from '@inertiajs/vue3';
 import { ref } from 'vue';
-import StudentController from '@/actions/App/Http/Controllers/StudentController';
 import GuardianController from '@/actions/App/Http/Controllers/GuardianController';
 
 interface Props {

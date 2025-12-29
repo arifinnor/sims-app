@@ -1,7 +1,6 @@
 import { h } from 'vue';
 import type { ColumnDef } from '@tanstack/vue-table';
 import { Badge } from '@/components/ui/badge';
-import TransactionController from '@/actions/App/Http/Controllers/Finance/TransactionController';
 import ActionsCell from './ActionsCell.vue';
 
 export interface Transaction {
@@ -100,7 +99,6 @@ export const createColumns = (
         accessorKey: 'referenceNumber',
         header: 'Ref #',
         cell: ({ row }) => {
-            const entry = row.original;
             return h(
                 'div',
                 { class: 'font-mono text-sm' },

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import ClassroomController from '@/actions/App/Http/Controllers/Academic/ClassroomController';
 import Heading from '@/components/Heading.vue';
-import InputError from '@/components/InputError.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Form, Head, Link, router } from '@inertiajs/vue3';

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { HTMLAttributes } from 'vue';
 import { cn } from '@/lib/utils';
 import FinanceController from '@/actions/App/Http/Controllers/Finance/FinanceController';
 import TransactionController from '@/actions/App/Http/Controllers/Finance/TransactionController';
@@ -100,22 +99,6 @@ const selectedTransactionType = computed(() => {
     }
     return props.transactionTypes.find((type) => type.id === selectedTransactionTypeId.value) || null;
 });
-
-const formatAmountInput = (value: string): string => {
-    // Remove all non-digit characters
-    const digits = value.replace(/\D/g, '');
-    if (!digits) {
-        return '';
-    }
-    // Add thousand separators (dots for IDR)
-    return digits.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-};
-
-const parseAmountInput = (value: string): number => {
-    // Remove all non-digit characters and parse as float
-    const digits = value.replace(/\D/g, '');
-    return digits ? parseFloat(digits) : 0;
-};
 
 const amountInput = ref<HTMLInputElement | null>(null);
 const amountFormatted = ref('');

@@ -13,7 +13,7 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, Calendar, GraduationCap, LayoutGrid, School, User, Users, Wallet } from 'lucide-vue-next';
+import { Calendar, GraduationCap, LayoutGrid, School, User, Users, Wallet } from 'lucide-vue-next';
 import AcademicYearController from '@/actions/App/Http/Controllers/Academic/AcademicYearController';
 import ClassroomController from '@/actions/App/Http/Controllers/Academic/ClassroomController';
 import StudentController from '@/actions/App/Http/Controllers/StudentController';
