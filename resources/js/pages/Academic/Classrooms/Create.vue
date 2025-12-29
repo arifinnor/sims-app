@@ -5,7 +5,6 @@ import InputError from '@/components/InputError.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Form, Head, Link } from '@inertiajs/vue3';
-import { ref } from 'vue';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
@@ -35,10 +34,7 @@ interface Props {
     teachers: Teacher[];
 }
 
-const props = defineProps<Props>();
-
-const selectedAcademicYearId = ref<string>('');
-const selectedTeacherId = ref<string>('');
+defineProps<Props>();
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -61,7 +57,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                 <div class="w-full">
                     <Heading
                         title="Create Classroom"
-                        description="Add a new classroom (Rombongan Belajar)"
+                        description="Add a new classroom"
                     />
                 </div>
                 <Button as-child variant="secondary" class="w-full md:w-auto">
@@ -71,17 +67,13 @@ const breadcrumbs: BreadcrumbItem[] = [
             <Form
                 v-bind="ClassroomController.store.form()"
                 class="contents"
-                :reset-on-success="['grade_level', 'name', 'capacity']"
-                @success="selectedAcademicYearId = ''; selectedTeacherId = ''"
+                :reset-on-success="['academic_year_id', 'homeroom_teacher_id', 'grade_level', 'name', 'capacity']"
                 v-slot="{ errors, processing }"
             >
                 <CardContent class="grid gap-6">
                     <div class="grid gap-2">
                         <Label for="academic_year_id">Academic Year</Label>
-                        <Select
-                            v-model="selectedAcademicYearId"
-                            required
-                        >
+                        <Select name="academic_year_id" required>
                             <SelectTrigger>
                                 <SelectValue placeholder="Select academic year" />
                             </SelectTrigger>
@@ -95,24 +87,16 @@ const breadcrumbs: BreadcrumbItem[] = [
                                 </SelectItem>
                             </SelectContent>
                         </Select>
-                        <input
-                            type="hidden"
-                            name="academic_year_id"
-                            :value="selectedAcademicYearId"
-                        />
                         <InputError :message="errors.academic_year_id" />
                     </div>
 
                     <div class="grid gap-2">
-                        <Label for="homeroom_teacher_id">Homeroom Teacher (Wali Kelas)</Label>
-                        <Select
-                            v-model="selectedTeacherId"
-                        >
+                        <Label for="homeroom_teacher_id">Homeroom Teacher</Label>
+                        <Select name="homeroom_teacher_id" required>
                             <SelectTrigger>
-                                <SelectValue placeholder="Select teacher (optional)" />
+                                <SelectValue placeholder="Select homeroom teacher" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="">None</SelectItem>
                                 <SelectItem
                                     v-for="teacher in teachers"
                                     :key="teacher.id"
@@ -122,11 +106,6 @@ const breadcrumbs: BreadcrumbItem[] = [
                                 </SelectItem>
                             </SelectContent>
                         </Select>
-                        <input
-                            type="hidden"
-                            name="homeroom_teacher_id"
-                            :value="selectedTeacherId || ''"
-                        />
                         <InputError :message="errors.homeroom_teacher_id" />
                     </div>
 

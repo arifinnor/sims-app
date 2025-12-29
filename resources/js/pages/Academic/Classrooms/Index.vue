@@ -117,7 +117,7 @@ const groupedByGrade = computed(() => {
             <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <Heading
                     title="Classrooms"
-                    description="Manage classrooms (Rombongan Belajar) for each academic year"
+                    description="Manage classrooms for each academic year"
                 />
                 <Button as-child>
                     <Link :href="ClassroomController.create().url"> Create Classroom </Link>
@@ -193,6 +193,15 @@ const groupedByGrade = computed(() => {
                                         </td>
                                         <td class="px-4 py-3 text-right">
                                             <div class="flex justify-end gap-2">
+                                                <Button
+                                                    as-child
+                                                    variant="outline"
+                                                    size="sm"
+                                                >
+                                                    <Link :href="ClassroomController.show(classroom.id).url">
+                                                        Show
+                                                    </Link>
+                                                </Button>
                                                 <Button
                                                     as-child
                                                     variant="outline"

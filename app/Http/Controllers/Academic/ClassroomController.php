@@ -108,8 +108,27 @@ class ClassroomController extends Controller
     {
         $classroom->load(['academicYear', 'homeroomTeacher', 'students']);
 
+        $academicYears = \App\Models\AcademicYear::query()
+            ->orderBy('start_date', 'desc')
+            ->get()
+            ->map(fn ($year) => [
+                'id' => $year->id,
+                'name' => $year->name,
+            ]);
+
+        $teachers = \App\Models\Teacher::query()
+            ->orderBy('name')
+            ->get()
+            ->map(fn ($teacher) => [
+                'id' => $teacher->id,
+                'name' => $teacher->name,
+                'teacherNumber' => $teacher->teacher_number,
+            ]);
+
         return Inertia::render('Academic/Classrooms/Edit', [
             'classroom' => ClassroomResource::make($classroom)->resolve(),
+            'academicYears' => $academicYears,
+            'teachers' => $teachers,
         ]);
     }
 

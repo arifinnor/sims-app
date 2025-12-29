@@ -18,6 +18,17 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 
+interface AcademicYear {
+    id: string;
+    name: string;
+}
+
+interface Teacher {
+    id: string;
+    name: string;
+    teacherNumber: string;
+}
+
 interface Classroom {
     id: string;
     academic_year_id: string;
@@ -29,6 +40,8 @@ interface Classroom {
 
 interface Props {
     classroom: Classroom;
+    academicYears: AcademicYear[];
+    teachers: Teacher[];
 }
 
 const props = defineProps<Props>();
@@ -76,26 +89,46 @@ const breadcrumbs: BreadcrumbItem[] = [
                 <CardContent class="grid gap-6">
                     <div class="grid gap-2">
                         <Label for="academic_year_id">Academic Year</Label>
-                        <Input
-                            id="academic_year_id"
-                            type="text"
+                        <Select
                             name="academic_year_id"
                             :default-value="classroom.academic_year_id"
                             required
-                            placeholder="Academic Year ID"
-                        />
+                        >
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select academic year" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem
+                                    v-for="year in academicYears"
+                                    :key="year.id"
+                                    :value="year.id"
+                                >
+                                    {{ year.name }}
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
                         <InputError :message="errors.academic_year_id" />
                     </div>
 
                     <div class="grid gap-2">
                         <Label for="homeroom_teacher_id">Homeroom Teacher (Wali Kelas)</Label>
-                        <Input
-                            id="homeroom_teacher_id"
-                            type="text"
+                        <Select
                             name="homeroom_teacher_id"
-                            :default-value="classroom.homeroom_teacher_id || ''"
-                            placeholder="Teacher ID (optional)"
-                        />
+                            :default-value="classroom.homeroom_teacher_id || undefined"
+                        >
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select homeroom teacher (optional)" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem
+                                    v-for="teacher in teachers"
+                                    :key="teacher.id"
+                                    :value="teacher.id"
+                                >
+                                    {{ teacher.name }} ({{ teacher.teacherNumber }})
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
                         <InputError :message="errors.homeroom_teacher_id" />
                     </div>
 
